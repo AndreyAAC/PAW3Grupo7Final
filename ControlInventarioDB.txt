@@ -1,0 +1,127 @@
+/* =========================================================
+   Base de datos y configuración
+   ========================================================= */
+IF DB_ID(N'ControlInventarioDB') IS NULL
+    CREATE DATABASE ControlInventarioDB;
+GO
+USE ControlInventarioDB;
+GO
+
+/* =========================================================
+   Tabla: Role
+   ========================================================= */
+IF OBJECT_ID('dbo.Role', 'U') IS NOT NULL DROP TABLE dbo.Role;
+CREATE TABLE dbo.Role (
+    idRole       INT IDENTITY(1,1) PRIMARY KEY,
+    NombreRole   NVARCHAR(100) NOT NULL UNIQUE
+);
+GO
+
+/* =========================================================
+   Tabla: Usuario
+   - 'cedula' como INT (único)
+   - 'correo' único
+   - FK a Role(idRole) mediante columna 'role'
+   ========================================================= */
+IF OBJECT_ID('dbo.Usuario', 'U') IS NOT NULL DROP TABLE dbo.Usuario;
+CREATE TABLE dbo.Usuario (
+    idUsuario        INT IDENTITY(1,1) PRIMARY KEY,
+    nombreUsuario    NVARCHAR(100) NOT NULL,
+    nombreApellido   NVARCHAR(150) NOT NULL,
+    correo           NVARCHAR(256) NOT NULL,
+    cedula           INT          NOT NULL,
+    telefono         NVARCHAR(20) NULL,
+    [contrasenia]     NVARCHAR(200) NOT NULL,  -- almacenar hash, no texto plano
+    [role]           INT NOT NULL,            -- FK a Role
+
+    CONSTRAINT UQ_Usuario_correo  UNIQUE (correo),
+    CONSTRAINT UQ_Usuario_cedula  UNIQUE (cedula),
+    CONSTRAINT FK_Usuario_Role    FOREIGN KEY ([role]) REFERENCES dbo.Role(idRole)
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+GO
+
+/* =========================================================
+   Tabla: Producto
+   ========================================================= */
+IF OBJECT_ID('dbo.Producto', 'U') IS NOT NULL DROP TABLE dbo.Producto;
+CREATE TABLE dbo.Producto (
+    idProducto   INT IDENTITY(1,1) PRIMARY KEY,
+    nombre       NVARCHAR(150) NOT NULL,
+    imagen       NVARCHAR(500) NULL,  -- URL o ruta
+    descripcion  NVARCHAR(1000) NULL,
+    precio       DECIMAL(12,2) NOT NULL CONSTRAINT CK_Producto_precio_nonneg CHECK (precio >= 0),
+    cantidad     INT NOT NULL CONSTRAINT CK_Producto_cantidad_nonneg CHECK (cantidad >= 0),
+    tipo         NVARCHAR(100) NULL
+);
+GO
+
+/* =========================================================
+   Tabla: Pedidos
+   Nota: el campo solicitado fue 'rstado' (mantengo el nombre exacto).
+         Si prefieres 'estado', se puede renombrar.
+   ========================================================= */
+IF OBJECT_ID('dbo.Pedidos', 'U') IS NOT NULL DROP TABLE dbo.Pedidos;
+CREATE TABLE dbo.Pedidos (
+    idPedido        INT IDENTITY(1,1) PRIMARY KEY,
+    fechaDeInicio   DATE NOT NULL,
+    fechaDeEntrega  DATE NULL,
+    estado          NVARCHAR(50) NOT NULL
+        CONSTRAINT CK_Pedidos_rstado CHECK (rstado IN (N'Pendiente', N'En Proceso', N'Entregado', N'Cancelado'))
+);
+GO
+
+/* =========================================================
+   Tabla: Cita
+   - 'producto' se define como FK a Producto(idProducto)
+   ========================================================= */
+IF OBJECT_ID('dbo.Cita', 'U') IS NOT NULL DROP TABLE dbo.Cita;
+CREATE TABLE dbo.Cita (
+    idCita      INT IDENTITY(1,1) PRIMARY KEY,
+    motivo      NVARCHAR(200) NOT NULL,
+    nombre      NVARCHAR(150) NOT NULL,
+    producto    INT NULL,  -- FK a Producto
+    telefono    NVARCHAR(20) NULL,
+    detalle     NVARCHAR(1000) NULL,
+    FechaCita   DATE NOT NULL,
+    HoraCita    TIME(0) NOT NULL,
+
+    CONSTRAINT FK_Cita_Producto FOREIGN KEY (producto) REFERENCES dbo.Producto(idProducto)
+        ON UPDATE NO ACTION ON DELETE SET NULL
+);
+GO
+
+/* =========================================================
+   Tabla: Gastos
+   ========================================================= */
+IF OBJECT_ID('dbo.Gastos', 'U') IS NOT NULL DROP TABLE dbo.Gastos;
+CREATE TABLE dbo.Gastos (
+    idGasto     INT IDENTITY(1,1) PRIMARY KEY,
+    motivo      NVARCHAR(200) NOT NULL,
+    fechaGasto  DATE NOT NULL,r
+    descripcion NVARCHAR(1000) NULL,
+    monto       DECIMAL(12,2) NOT NULL CONSTRAINT CK_Gastos_monto_nonneg CHECK (monto >= 0),
+    categoria   NVARCHAR(100) NULL
+);
+GO
+
+/* =========================================================
+   Tabla: CuentasPagar
+   ========================================================= */
+IF OBJECT_ID('dbo.CuentasPagar', 'U') IS NOT NULL DROP TABLE dbo.CuentasPagar;
+CREATE TABLE dbo.CuentasPagar (
+    idCuentaPagar     INT IDENTITY(1,1) PRIMARY KEY,
+    motivo            NVARCHAR(200) NOT NULL,
+    fechaCuentaPagar  DATE NOT NULL,
+    descripcion       NVARCHAR(1000) NULL,
+    monto             DECIMAL(12,2) NOT NULL CONSTRAINT CK_CuentasPagar_monto_nonneg CHECK (monto >= 0),
+    plazoPagar        NVARCHAR(100) NULL
+);
+GO
+
+/* =========================================================
+   Sugerencias de índices (opcionales)
+   ========================================================= */
+CREATE INDEX IX_Producto_nombre      ON dbo.Producto(nombre);
+CREATE INDEX IX_Cita_FechaHora       ON dbo.Cita(FechaCita, HoraCita);
+CREATE INDEX IX_Pedidos_rstado       ON dbo.Pedidos(rstado);
