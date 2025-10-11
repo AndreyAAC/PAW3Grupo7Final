@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "ProyectoFinal.Mvc\\ProyectoFinal.Mvc.fsproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "ProyectoFinal.Api\\ProyectoFinal.Api.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

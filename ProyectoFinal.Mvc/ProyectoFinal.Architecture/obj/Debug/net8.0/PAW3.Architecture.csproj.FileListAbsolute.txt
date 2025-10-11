@@ -1,0 +1,13 @@
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\bin\Debug\net8.0\PAW3.Architecture.deps.json
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\bin\Debug\net8.0\PAW3.Architecture.dll
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\bin\Debug\net8.0\PAW3.Architecture.pdb
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\PAW3.Architecture.csproj.AssemblyReference.cache
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\PAW3.Architecture.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\PAW3.Architecture.AssemblyInfoInputs.cache
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\PAW3.Architecture.AssemblyInfo.cs
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\PAW3.Architecture.csproj.CoreCompileInputs.cache
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\PAW3.Architecture.sourcelink.json
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\PAW3.Architecture.dll
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\refint\PAW3.Architecture.dll
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\PAW3.Architecture.pdb
+C:\Users\XPC\Desktop\Fidelitas\Progra V\PAW3\PAW3.Architecture\obj\Debug\net8.0\ref\PAW3.Architecture.dll

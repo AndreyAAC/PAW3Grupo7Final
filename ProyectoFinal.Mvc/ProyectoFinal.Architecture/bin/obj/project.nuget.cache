@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "fsmDBQR0JPc=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\XPC\\Desktop\\Fidelitas\\Progra V\\PAW3\\PAW3.Architecture\\PAW3.Architecture.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\XPC\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\9.0.9\\microsoft.extensions.configuration.abstractions.9.0.9.nupkg.sha512",
+    "C:\\Users\\XPC\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.9\\microsoft.extensions.primitives.9.0.9.nupkg.sha512"
+  ],
+  "logs": []
+}
