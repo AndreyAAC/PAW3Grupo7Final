@@ -1,0 +1,45 @@
+﻿@model ProyectoFinal.Models.DTOs.CuentaPagarDTO
+
+<div class="container p-3">
+    <h5 class="mb-3">Editar Cuenta por Pagar</h5>
+
+    <form method="post" asp-controller="CuentasPagar" asp-action="Edit" class="row g-3">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" name="IdCuentaPagar" value="@Model.IdCuentaPagar" />
+
+        <div class="col-md-6">
+            <label class="form-label">Motivo</label>
+            <input name="Motivo" class="form-control" value="@Model.Motivo" required />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Fecha</label>
+            <input type="date"
+                   name="FechaCuentaPagar"
+                   class="form-control"
+                   value="@(Model.FechaCuentaPagar.ToString("yyyy-MM-dd"))"
+                   required />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Monto</label>
+            <input type="number" step="0.01" name="Monto" class="form-control" value="@Model.Monto" required />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Plazo Pagar</label>
+            <input name="PlazoPagar" class="form-control" value="@Model.PlazoPagar" />
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">Descripción</label>
+            <textarea name="Descripcion" class="form-control" rows="3">@Model.Descripcion</textarea>
+        </div>
+
+        <div class="col-12 mt-2 d-flex gap-2">
+            <button class="btn btn-success" type="submit">Guardar</button>
+            <a class="btn btn-secondary" asp-controller="CuentasPagar" asp-action="Index">Cancelar</a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,86 @@
+﻿@model ProyectoFinal.Mvc.Models.Contabilidad.GastosVM
+@{
+    ViewData["Title"] = "Gastos";
+}
+
+<div class="container py-3">
+    <h2>Gastos</h2>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Listado</h4>
+        <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#crearGasto">Nuevo Gasto</button>
+    </div>
+
+    <div id="crearGasto" class="collapse mt-3">
+        <form method="post" asp-controller="Gastos" asp-action="Create">
+            @Html.AntiForgeryToken()
+            <div class="row g-2">
+                <div class="col-sm-3">
+                    <label class="form-label">Motivo</label>
+                    <input name="Motivo" class="form-control" required />
+                </div>
+                <div class="col-sm-2">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" name="FechaGasto" class="form-control" required />
+                </div>
+                <div class="col-sm-2">
+                    <label class="form-label">Monto</label>
+                    <input type="number" step="0.01" name="Monto" class="form-control" required />
+                </div>
+                <div class="col-sm-3">
+                    <label class="form-label">Categoría (Id)</label>
+                    <input type="number" name="IdCategoriaGasto" class="form-control" />
+                </div>
+                <div class="col-sm-12">
+                    <label class="form-label">Descripción</label>
+                    <textarea name="Descripcion" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="mt-2">
+                <button class="btn btn-success" type="submit">Crear</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Motivo</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Categoría</th>
+                    <th>Descripción</th>
+                    <th style="width:140px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var g in Model.Gastos)
+                {
+                    <tr>
+                        <td>@g.IdGasto</td>
+                        <td>@g.Motivo</td>
+                        <td>@g.FechaGasto</td>
+                        <td>@g.Monto</td>
+                        <td>@g.NombreCategoria</td>
+                        <td>@g.Descripcion</td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary"
+                               asp-controller="Gastos" asp-action="Edit" asp-route-id="@g.IdGasto">Editar</a>
+
+                            <form asp-controller="Gastos" asp-action="Delete" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@g.IdGasto" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit"
+                                        onclick="return confirm('¿Eliminar gasto @g.IdGasto?');">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

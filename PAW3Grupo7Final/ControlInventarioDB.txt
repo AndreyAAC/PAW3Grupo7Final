@@ -1,0 +1,240 @@
+/* =========================================================
+   Base de datos y configuración
+   ========================================================= */
+IF DB_ID(N'ControlInventarioDB') IS NULL
+    CREATE DATABASE ControlInventarioDB;
+GO
+USE ControlInventarioDB;
+GO
+
+/* =========================================================
+   Limpieza segura (hijos -> padres)
+   ========================================================= */
+IF OBJECT_ID('dbo.PedidoDetalle', 'U')      IS NOT NULL DROP TABLE dbo.PedidoDetalle;
+IF OBJECT_ID('dbo.Pedido', 'U')             IS NOT NULL DROP TABLE dbo.Pedido;
+IF OBJECT_ID('dbo.Cita', 'U')               IS NOT NULL DROP TABLE dbo.Cita;
+IF OBJECT_ID('dbo.Inventario', 'U')         IS NOT NULL DROP TABLE dbo.Inventario;
+IF OBJECT_ID('dbo.Producto', 'U')           IS NOT NULL DROP TABLE dbo.Producto;
+IF OBJECT_ID('dbo.Usuario', 'U')            IS NOT NULL DROP TABLE dbo.Usuario;
+IF OBJECT_ID('dbo.Gasto', 'U')              IS NOT NULL DROP TABLE dbo.Gasto;
+IF OBJECT_ID('dbo.CuentasPagar', 'U')       IS NOT NULL DROP TABLE dbo.CuentasPagar;
+IF OBJECT_ID('dbo.Cliente', 'U')            IS NOT NULL DROP TABLE dbo.Cliente;
+
+IF OBJECT_ID('dbo.TipoProducto', 'U')       IS NOT NULL DROP TABLE dbo.TipoProducto;
+IF OBJECT_ID('dbo.EstadoPedido', 'U')       IS NOT NULL DROP TABLE dbo.EstadoPedido;
+IF OBJECT_ID('dbo.CategoriaGasto', 'U')     IS NOT NULL DROP TABLE dbo.CategoriaGasto;
+IF OBJECT_ID('dbo.Role', 'U')               IS NOT NULL DROP TABLE dbo.Role;
+GO
+
+/* =========================================================
+   Catálogo: Role
+   ========================================================= */
+CREATE TABLE dbo.Role (
+    idRole       INT IDENTITY(1,1) PRIMARY KEY,
+    NombreRole   NVARCHAR(100) NOT NULL UNIQUE
+);
+GO
+
+/* =========================================================
+   Maestro: Usuario
+   ========================================================= */
+CREATE TABLE dbo.Usuario (
+    idUsuario        INT IDENTITY(1,1) PRIMARY KEY,
+    nombreUsuario    NVARCHAR(100) NOT NULL,
+    nombreApellido   NVARCHAR(150) NOT NULL,
+    correo           NVARCHAR(256) NOT NULL,
+    cedula           INT           NOT NULL,
+    telefono         NVARCHAR(20)  NULL,
+    [contrasenia]    NVARCHAR(200) NOT NULL,  -- almacenar hash, no texto plano
+    [role]           INT           NOT NULL,
+    CONSTRAINT UQ_Usuario_correo  UNIQUE (correo),
+    CONSTRAINT UQ_Usuario_cedula  UNIQUE (cedula),
+    CONSTRAINT FK_Usuario_Role FOREIGN KEY ([role])
+        REFERENCES dbo.Role(idRole)
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+GO
+
+/* =========================================================
+   Catálogo: TipoProducto (normaliza 'tipo' de Producto)
+   ========================================================= */
+CREATE TABLE dbo.TipoProducto (
+    idTipoProducto INT IDENTITY(1,1) PRIMARY KEY,
+    NombreTipo     NVARCHAR(100) NOT NULL UNIQUE
+);
+GO
+
+/* =========================================================
+   Maestro: Producto  (sin 'cantidad' → va a Inventario)
+   ========================================================= */
+CREATE TABLE dbo.Producto (
+    idProducto   INT IDENTITY(1,1) PRIMARY KEY,
+    nombre       NVARCHAR(150) NOT NULL,
+    imagen       NVARCHAR(500) NULL,  -- URL o ruta
+    descripcion  NVARCHAR(1000) NULL,
+    precio       DECIMAL(12,2) NOT NULL
+        CONSTRAINT CK_Producto_precio_nonneg CHECK (precio >= 0),
+    idTipoProducto INT NULL,
+    CONSTRAINT FK_Producto_TipoProducto FOREIGN KEY (idTipoProducto)
+        REFERENCES dbo.TipoProducto(idTipoProducto)
+        ON UPDATE NO ACTION ON DELETE SET NULL
+);
+GO
+
+/* Índices sugeridos Producto */
+CREATE INDEX IX_Producto_nombre ON dbo.Producto(nombre);
+GO
+
+/* =========================================================
+   Inventario (1:1 con Producto, almacena cantidad actual)
+   ========================================================= */
+CREATE TABLE dbo.Inventario (
+    idInventario INT IDENTITY(1,1) PRIMARY KEY,
+    idProducto   INT NOT NULL UNIQUE, -- 1:1
+    cantidad     INT NOT NULL
+        CONSTRAINT CK_Inventario_cantidad_nonneg CHECK (cantidad >= 0),
+    CONSTRAINT FK_Inventario_Producto FOREIGN KEY (idProducto)
+        REFERENCES dbo.Producto(idProducto)
+        ON UPDATE CASCADE ON DELETE CASCADE
+);
+GO
+
+/* =========================================================
+   Catálogo: EstadoPedido (normaliza 'estado')
+   ========================================================= */
+CREATE TABLE dbo.EstadoPedido (
+    idEstadoPedido INT IDENTITY(1,1) PRIMARY KEY,
+    NombreEstado   NVARCHAR(50) NOT NULL UNIQUE
+        -- Ej.: 'Pendiente', 'En Proceso', 'Entregado', 'Cancelado'
+);
+GO
+
+/* =========================================================
+   Encabezado: Pedido
+   (opcionalmente podrías relacionarlo a Usuario/Cliente)
+   ========================================================= */
+CREATE TABLE dbo.Pedido (
+    idPedido        INT IDENTITY(1,1) PRIMARY KEY,
+    fechaDeInicio   DATE NOT NULL,
+    fechaDeEntrega  DATE NULL,
+    idEstadoPedido  INT NOT NULL,
+    -- idUsuario     INT NULL,  -- descomentar si asocias pedido a un usuario del sistema
+    CONSTRAINT FK_Pedido_EstadoPedido FOREIGN KEY (idEstadoPedido)
+        REFERENCES dbo.EstadoPedido(idEstadoPedido)
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+    --,CONSTRAINT FK_Pedido_Usuario FOREIGN KEY (idUsuario) REFERENCES dbo.Usuario(idUsuario)
+);
+GO
+
+/* =========================================================
+   Detalle: PedidoDetalle (N:M entre Pedido y Producto)
+   ========================================================= */
+CREATE TABLE dbo.PedidoDetalle (
+    idPedido     INT NOT NULL,
+    idProducto   INT NOT NULL,
+    cantidad     INT NOT NULL
+        CONSTRAINT CK_PedidoDetalle_cantidad_pos CHECK (cantidad > 0),
+    precioUnitario DECIMAL(12,2) NOT NULL
+        CONSTRAINT CK_PedidoDetalle_precio_pos CHECK (precioUnitario >= 0),
+    CONSTRAINT PK_PedidoDetalle PRIMARY KEY (idPedido, idProducto),
+    CONSTRAINT FK_PedidoDetalle_Pedido FOREIGN KEY (idPedido)
+        REFERENCES dbo.Pedido(idPedido)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT FK_PedidoDetalle_Producto FOREIGN KEY (idProducto)
+        REFERENCES dbo.Producto(idProducto)
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+GO
+
+/* Índices sugeridos Pedido/PedidoDetalle */
+CREATE INDEX IX_Pedido_FechaInicio ON dbo.Pedido(fechaDeInicio);
+CREATE INDEX IX_Pedido_idEstado ON dbo.Pedido(idEstadoPedido);
+GO
+
+/* =========================================================
+   Maestro: Cliente (evita repetir nombre/teléfono en Cita)
+   ========================================================= */
+CREATE TABLE dbo.Cliente (
+    idCliente   INT IDENTITY(1,1) PRIMARY KEY,
+    nombre      NVARCHAR(150) NOT NULL,
+    telefono    NVARCHAR(20)  NULL,
+    correo      NVARCHAR(256) NULL
+);
+GO
+
+/* =========================================================
+   Cita (ahora referencia Cliente; Producto opcional)
+   ========================================================= */
+CREATE TABLE dbo.Cita (
+    idCita      INT IDENTITY(1,1) PRIMARY KEY,
+    idCliente   INT NOT NULL,
+    motivo      NVARCHAR(200) NOT NULL,
+    producto    INT NULL,  -- FK a Producto
+    detalle     NVARCHAR(1000) NULL,
+    FechaCita   DATE NOT NULL,
+    HoraCita    TIME(0) NOT NULL,
+    CONSTRAINT FK_Cita_Cliente FOREIGN KEY (idCliente)
+        REFERENCES dbo.Cliente(idCliente)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT FK_Cita_Producto FOREIGN KEY (producto)
+        REFERENCES dbo.Producto(idProducto)
+        ON UPDATE NO ACTION ON DELETE SET NULL
+);
+GO
+
+/* Índices sugeridos Cita */
+CREATE INDEX IX_Cita_FechaHora ON dbo.Cita(FechaCita, HoraCita);
+GO
+
+/* =========================================================
+   Catálogo: CategoriaGasto (normaliza 'categoria')
+   ========================================================= */
+CREATE TABLE dbo.CategoriaGasto (
+    idCategoriaGasto INT IDENTITY(1,1) PRIMARY KEY,
+    NombreCategoria  NVARCHAR(100) NOT NULL UNIQUE
+);
+GO
+
+/* =========================================================
+   Gasto (fechaGasto sin el typo)
+   ========================================================= */
+CREATE TABLE dbo.Gasto (
+    idGasto     INT IDENTITY(1,1) PRIMARY KEY,
+    motivo      NVARCHAR(200) NOT NULL,
+    fechaGasto  DATE NOT NULL,
+    descripcion NVARCHAR(1000) NULL,
+    monto       DECIMAL(12,2) NOT NULL
+        CONSTRAINT CK_Gasto_monto_nonneg CHECK (monto >= 0),
+    idCategoriaGasto INT NULL,
+    CONSTRAINT FK_Gasto_Categoria FOREIGN KEY (idCategoriaGasto)
+        REFERENCES dbo.CategoriaGasto(idCategoriaGasto)
+        ON UPDATE NO ACTION ON DELETE SET NULL
+);
+GO
+
+/* =========================================================
+   CuentasPagar
+   (mantengo 'plazoPagar' como texto; si lo usas mucho,
+    se puede normalizar a un catálogo de plazos)
+   ========================================================= */
+CREATE TABLE dbo.CuentasPagar (
+    idCuentaPagar     INT IDENTITY(1,1) PRIMARY KEY,
+    motivo            NVARCHAR(200) NOT NULL,
+    fechaCuentaPagar  DATE NOT NULL,
+    descripcion       NVARCHAR(1000) NULL,
+    monto             DECIMAL(12,2) NOT NULL
+        CONSTRAINT CK_CuentasPagar_monto_nonneg CHECK (monto >= 0),
+    plazoPagar        NVARCHAR(100) NULL
+);
+GO
+
+/* =========================================================
+   Semillas útiles (opcionales)
+   ========================================================= */
+INSERT INTO dbo.EstadoPedido (NombreEstado)
+VALUES (N'Pendiente'), (N'En Proceso'), (N'Entregado'), (N'Cancelado');
+
+-- INSERTs opcionales para TipoProducto / CategoriaGasto:
+-- INSERT INTO dbo.TipoProducto (NombreTipo) VALUES (N'Electrónica'), (N'Hogar');
+-- INSERT INTO dbo.CategoriaGasto (NombreCategoria) VALUES (N'Servicios'), (N'Insumos');
+GO
