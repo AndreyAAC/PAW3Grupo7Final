@@ -7,9 +7,7 @@ GO
 USE ControlInventarioDB;
 GO
 
-/* =========================================================
-   Limpieza segura (hijos -> padres)
-   ========================================================= */
+
 IF OBJECT_ID('dbo.PedidoDetalle', 'U')      IS NOT NULL DROP TABLE dbo.PedidoDetalle;
 IF OBJECT_ID('dbo.Pedido', 'U')             IS NOT NULL DROP TABLE dbo.Pedido;
 IF OBJECT_ID('dbo.Cita', 'U')               IS NOT NULL DROP TABLE dbo.Cita;
@@ -27,7 +25,7 @@ IF OBJECT_ID('dbo.Role', 'U')               IS NOT NULL DROP TABLE dbo.Role;
 GO
 
 /* =========================================================
-   Catálogo: Role
+   Role
    ========================================================= */
 CREATE TABLE dbo.Role (
     idRole       INT IDENTITY(1,1) PRIMARY KEY,
@@ -36,7 +34,7 @@ CREATE TABLE dbo.Role (
 GO
 
 /* =========================================================
-   Maestro: Usuario
+   Usuario
    ========================================================= */
 CREATE TABLE dbo.Usuario (
     idUsuario        INT IDENTITY(1,1) PRIMARY KEY,
@@ -56,7 +54,7 @@ CREATE TABLE dbo.Usuario (
 GO
 
 /* =========================================================
-   Catálogo: TipoProducto (normaliza 'tipo' de Producto)
+   TipoProducto (normaliza 'tipo' de Producto)
    ========================================================= */
 CREATE TABLE dbo.TipoProducto (
     idTipoProducto INT IDENTITY(1,1) PRIMARY KEY,
@@ -65,7 +63,7 @@ CREATE TABLE dbo.TipoProducto (
 GO
 
 /* =========================================================
-   Maestro: Producto  (sin 'cantidad' → va a Inventario)
+   Producto  (sin 'cantidad', es parte de Inventario)
    ========================================================= */
 CREATE TABLE dbo.Producto (
     idProducto   INT IDENTITY(1,1) PRIMARY KEY,
@@ -81,7 +79,7 @@ CREATE TABLE dbo.Producto (
 );
 GO
 
-/* Índices sugeridos Producto */
+
 CREATE INDEX IX_Producto_nombre ON dbo.Producto(nombre);
 GO
 
@@ -100,7 +98,7 @@ CREATE TABLE dbo.Inventario (
 GO
 
 /* =========================================================
-   Catálogo: EstadoPedido (normaliza 'estado')
+   EstadoPedido (normaliza 'estado')
    ========================================================= */
 CREATE TABLE dbo.EstadoPedido (
     idEstadoPedido INT IDENTITY(1,1) PRIMARY KEY,
@@ -110,8 +108,7 @@ CREATE TABLE dbo.EstadoPedido (
 GO
 
 /* =========================================================
-   Encabezado: Pedido
-   (opcionalmente podrías relacionarlo a Usuario/Cliente)
+   Pedido
    ========================================================= */
 CREATE TABLE dbo.Pedido (
     idPedido        INT IDENTITY(1,1) PRIMARY KEY,
@@ -127,7 +124,7 @@ CREATE TABLE dbo.Pedido (
 GO
 
 /* =========================================================
-   Detalle: PedidoDetalle (N:M entre Pedido y Producto)
+   Detalle: PedidoDetalle
    ========================================================= */
 CREATE TABLE dbo.PedidoDetalle (
     idPedido     INT NOT NULL,
@@ -152,7 +149,7 @@ CREATE INDEX IX_Pedido_idEstado ON dbo.Pedido(idEstadoPedido);
 GO
 
 /* =========================================================
-   Maestro: Cliente (evita repetir nombre/teléfono en Cita)
+   Cliente
    ========================================================= */
 CREATE TABLE dbo.Cliente (
     idCliente   INT IDENTITY(1,1) PRIMARY KEY,
@@ -163,7 +160,7 @@ CREATE TABLE dbo.Cliente (
 GO
 
 /* =========================================================
-   Cita (ahora referencia Cliente; Producto opcional)
+   Cita
    ========================================================= */
 CREATE TABLE dbo.Cita (
     idCita      INT IDENTITY(1,1) PRIMARY KEY,
@@ -182,12 +179,12 @@ CREATE TABLE dbo.Cita (
 );
 GO
 
-/* Índices sugeridos Cita */
+
 CREATE INDEX IX_Cita_FechaHora ON dbo.Cita(FechaCita, HoraCita);
 GO
 
 /* =========================================================
-   Catálogo: CategoriaGasto (normaliza 'categoria')
+   CategoriaGasto (normaliza 'categoria')
    ========================================================= */
 CREATE TABLE dbo.CategoriaGasto (
     idCategoriaGasto INT IDENTITY(1,1) PRIMARY KEY,
@@ -196,7 +193,7 @@ CREATE TABLE dbo.CategoriaGasto (
 GO
 
 /* =========================================================
-   Gasto (fechaGasto sin el typo)
+   Gasto
    ========================================================= */
 CREATE TABLE dbo.Gasto (
     idGasto     INT IDENTITY(1,1) PRIMARY KEY,
@@ -214,8 +211,6 @@ GO
 
 /* =========================================================
    CuentasPagar
-   (mantengo 'plazoPagar' como texto; si lo usas mucho,
-    se puede normalizar a un catálogo de plazos)
    ========================================================= */
 CREATE TABLE dbo.CuentasPagar (
     idCuentaPagar     INT IDENTITY(1,1) PRIMARY KEY,
@@ -228,9 +223,7 @@ CREATE TABLE dbo.CuentasPagar (
 );
 GO
 
-/* =========================================================
-   Semillas útiles (opcionales)
-   ========================================================= */
+
 INSERT INTO dbo.EstadoPedido (NombreEstado)
 VALUES (N'Pendiente'), (N'En Proceso'), (N'Entregado'), (N'Cancelado');
 
