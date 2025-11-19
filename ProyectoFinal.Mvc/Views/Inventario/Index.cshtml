@@ -1,0 +1,129 @@
+﻿@model ProyectoFinal.Mvc.Models.Inventario.InventariosVM
+@{
+    ViewData["Title"] = "Inventario";
+}
+
+@if (TempData["ErrorInventario"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorInventario"]
+    </div>
+}
+
+@if (TempData["OkInventario"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["OkInventario"]
+    </div>
+}
+
+<div class="container py-3">
+    <h2>Inventario</h2>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Listado</h4>
+        <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#crearInventario">
+            Nuevo Registro
+        </button>
+    </div>
+
+    <!-- Formulario para crear registro de inventario -->
+    <div id="crearInventario" class="collapse mt-3">
+        <form method="post" asp-controller="Inventario" asp-action="Create">
+            @Html.AntiForgeryToken()
+            <div class="row g-2">
+                <div class="col-sm-6">
+                    <label class="form-label">Producto</label>
+                    <select name="IdProducto" class="form-select" required>
+                        <option value="">-- Seleccione un producto --</option>
+                        @foreach (var p in Model.Productos)
+                        {
+                            <option value="@p.IdProducto">@p.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-sm-4">
+                    <label class="form-label">Cantidad</label>
+                    <input type="number" name="Cantidad" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <button class="btn btn-success" type="submit">Crear</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla de inventario -->
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Id Inventario</th>
+                    <th>Id Producto</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th style="width:140px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var i in Model.Inventarios)
+                {
+                    <tr>
+                        <td>@i.IdInventario</td>
+                        <td>@i.IdProducto</td>
+                        <td>@i.NombreProducto</td>
+                        <td>@i.Cantidad</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEditarInventario"
+                                    data-id="@i.IdInventario">
+                                Editar
+                            </button>
+
+                            <form asp-controller="Inventario" asp-action="Delete" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@i.IdInventario" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit"
+                                        onclick="return confirm('¿Eliminar registro de inventario @i.IdInventario?');">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para editar inventario -->
+<div class="modal fade" id="modalEditarInventario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" id="modalEditarInventarioBody">
+                <!-- Aquí se carga _EditInventario vía AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const modalEditarInventario = document.getElementById('modalEditarInventario');
+        modalEditarInventario.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-id');
+
+            const url = '@Url.Action("Edit", "Inventario")' + '/' + id;
+
+            fetch(url)
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('modalEditarInventarioBody').innerHTML = html;
+                });
+        });
+    </script>
+}

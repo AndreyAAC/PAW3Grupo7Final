@@ -1,0 +1,31 @@
+﻿@model ProyectoFinal.Mvc.Models.Inventario.InventarioEditVM
+
+<form method="post" asp-controller="Inventario" asp-action="Edit">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="IdInventario" value="@Model.Inventario.IdInventario" />
+
+    <div class="mb-3">
+        <label class="form-label">Producto</label>
+        <select name="IdProducto" class="form-select">
+            <option value="">-- Seleccione un producto --</option>
+            @foreach (var p in Model.Productos)
+            {
+                var selected = p.IdProducto == Model.Inventario.IdProducto ? "selected" : null;
+                <option value="@p.IdProducto" selected="@selected">@p.Nombre</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Cantidad</label>
+        <input type="number"
+               name="Cantidad"
+               class="form-control"
+               value="@Model.Inventario.Cantidad" />
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    </div>
+</form>

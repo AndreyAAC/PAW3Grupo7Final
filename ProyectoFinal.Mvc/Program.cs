@@ -18,6 +18,21 @@ builder.Services.AddHttpClient("ApiCuentas", client =>
     client.BaseAddress = new Uri("https://localhost:7204/"); // ProyectoFinal.MinimalApi
 });
 
+builder.Services.AddHttpClient("ApiProductos", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7153/"); // mismo puerto que la API de Gastos
+});
+
+builder.Services.AddHttpClient("ApiInventarios", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7153/");
+});
+
+builder.Services.AddHttpClient("ApiTiposProducto", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7153/");
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

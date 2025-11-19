@@ -1,0 +1,140 @@
+﻿@model ProyectoFinal.Mvc.Models.Inventario.ProductosVM
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<div class="container py-3">
+    <h2>Productos</h2>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Listado</h4>
+        <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#crearProducto">
+            Nuevo Producto
+        </button>
+    </div>
+
+    <!-- Formulario para crear producto -->
+    <div id="crearProducto" class="collapse mt-3">
+        <form method="post" asp-controller="Productos" asp-action="Create">
+            @Html.AntiForgeryToken()
+            <div class="row g-2">
+                <div class="col-sm-4">
+                    <label class="form-label">Nombre</label>
+                    <input name="Nombre" class="form-control" required />
+                </div>
+
+                <div class="col-sm-2">
+                    <label class="form-label">Precio</label>
+                    <input type="number" step="0.01" name="Precio" class="form-control" required />
+                </div>
+
+                <div class="col-sm-3">
+                    <label class="form-label">Tipo de Producto</label>
+                    <select name="IdTipoProducto" class="form-select">
+                        <option value="">-- Seleccione --</option>
+                        @foreach (var tipo in Model.TiposProducto)
+                        {
+                            <option value="@tipo.IdTipoProducto">@tipo.NombreTipo</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-sm-3">
+                    <label class="form-label">URL Imagen</label>
+                    <input name="Imagen" class="form-control" />
+                </div>
+
+                <div class="col-sm-12">
+                    <label class="form-label">Descripción</label>
+                    <textarea name="Descripcion" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <button class="btn btn-success" type="submit">Crear</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla de productos -->
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Imagen</th>
+                    <th style="width:140px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Productos)
+                {
+                    <tr>
+                        <td>@p.IdProducto</td>
+                        <td>@p.Nombre</td>
+                        <td>@p.Precio</td>
+                        <td>@p.NombreTipoProducto</td>
+                        <td>@p.Descripcion</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(p.Imagen))
+                            {
+                                <a href="@p.Imagen" target="_blank">Ver</a>
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEditarProducto"
+                                    data-id="@p.IdProducto">
+                                Editar
+                            </button>
+
+                            <form asp-controller="Productos" asp-action="Delete" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@p.IdProducto" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit"
+                                        onclick="return confirm('¿Eliminar producto @p.IdProducto?');">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para editar producto -->
+<div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" id="modalEditarProductoBody">
+                <!-- Aquí se carga _EditProducto vía AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Cargar el formulario de edición en el modal
+        const modalEditarProducto = document.getElementById('modalEditarProducto');
+        modalEditarProducto.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-id');
+
+            const url = '@Url.Action("Edit", "Productos")' + '/' + id;
+
+            fetch(url)
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('modalEditarProductoBody').innerHTML = html;
+                });
+        });
+    </script>
+}
