@@ -2,63 +2,67 @@
 
 @{
     ViewData["Title"] = "Registro";
+    Layout = "~/Views/Shared/_Layout_Auth.cshtml";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6">
-        <h2 class="text-center mb-4">Crear cuenta</h2>
+<div class="auth-page">
+    <div class="auth-card auth-card--wide shadow-lg">
+        <h2 class="text-center mb-2 fw-bold">Crear cuenta</h2>
+        <p class="text-center auth-subtitle mb-4">
+            Registra tu usuario para comenzar a utilizar el sistema.
+        </p>
 
         <form asp-action="Register" method="post">
             @Html.AntiForgeryToken()
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label asp-for="Nombre" class="form-label">Nombre</label>
-                    <input asp-for="Nombre" class="form-control" required />
-                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                    <label asp-for="Nombre" class="form-label fw-semibold">Nombre</label>
+                    <input asp-for="Nombre" class="form-control auth-input" required />
+                    <span asp-validation-for="Nombre" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label asp-for="Apellido" class="form-label">Apellido</label>
-                    <input asp-for="Apellido" class="form-control" required />
-                    <span asp-validation-for="Apellido" class="text-danger"></span>
+                    <label asp-for="Apellido" class="form-label fw-semibold">Apellido</label>
+                    <input asp-for="Apellido" class="form-control auth-input" required />
+                    <span asp-validation-for="Apellido" class="text-danger small"></span>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Correo" class="form-label">Correo</label>
-                <input asp-for="Correo" class="form-control" type="email" required />
-                <span asp-validation-for="Correo" class="text-danger"></span>
+                <label asp-for="Correo" class="form-label fw-semibold">Correo</label>
+                <input asp-for="Correo" class="form-control auth-input" type="email" required />
+                <span asp-validation-for="Correo" class="text-danger small"></span>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label asp-for="Cedula" class="form-label">Cédula</label>
-                    <input asp-for="Cedula" class="form-control" type="number" required />
-                    <span asp-validation-for="Cedula" class="text-danger"></span>
+                    <label asp-for="Cedula" class="form-label fw-semibold">Cédula</label>
+                    <input asp-for="Cedula" class="form-control auth-input" type="number" required />
+                    <span asp-validation-for="Cedula" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label asp-for="Telefono" class="form-label">Teléfono (opcional)</label>
-                    <input asp-for="Telefono" class="form-control" />
-                    <span asp-validation-for="Telefono" class="text-danger"></span>
+                    <label asp-for="Telefono" class="form-label fw-semibold">Teléfono (opcional)</label>
+                    <input asp-for="Telefono" class="form-control auth-input" />
+                    <span asp-validation-for="Telefono" class="text-danger small"></span>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label asp-for="Contrasenia" class="form-label">Contraseña</label>
-                    <input asp-for="Contrasenia" class="form-control" type="password" required />
-                    <span asp-validation-for="Contrasenia" class="text-danger"></span>
+                    <label asp-for="Contrasenia" class="form-label fw-semibold">Contraseña</label>
+                    <input asp-for="Contrasenia" class="form-control auth-input" type="password" required />
+                    <span asp-validation-for="Contrasenia" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label asp-for="ConfirmarContrasenia" class="form-label">Confirmar contraseña</label>
-                    <input asp-for="ConfirmarContrasenia" class="form-control" type="password" required />
-                    <span asp-validation-for="ConfirmarContrasenia" class="text-danger"></span>
+                    <label asp-for="ConfirmarContrasenia" class="form-label fw-semibold">Confirmar contraseña</label>
+                    <input asp-for="ConfirmarContrasenia" class="form-control auth-input" type="password" required />
+                    <span asp-validation-for="ConfirmarContrasenia" class="text-danger small"></span>
                 </div>
             </div>
 
-            @if (!ViewData.ModelState.IsValid)
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.SelectMany(v => v.Errors).Any())
             {
-                <div class="text-danger mb-2">
+                <div class="text-danger mb-2 small">
                     @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                     {
                         <div>@error.ErrorMessage</div>
@@ -66,11 +70,13 @@
                 </div>
             }
 
-            <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+            <button type="submit" class="btn btn-primary w-100 auth-button">
+                Registrarse
+            </button>
 
-            <div class="mt-3 text-center">
-                <span>¿Ya tienes cuenta?</span>
-                <a asp-action="Login">Inicia sesión</a>
+            <div class="mt-4 text-center">
+                <span class="auth-text-muted">¿Ya tienes cuenta?</span>
+                <a asp-action="Login" class="auth-link ms-1">Inicia sesión</a>
             </div>
         </form>
     </div>
