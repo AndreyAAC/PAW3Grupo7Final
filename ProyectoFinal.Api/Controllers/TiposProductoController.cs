@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProyectoFinal.Data.Models;
+using ProyectoFinal.Core.BusinessLogic;
 using ProyectoFinal.Models.DTOs;
 
 namespace ProyectoFinal.Api.Controllers
@@ -9,26 +8,18 @@ namespace ProyectoFinal.Api.Controllers
     [Route("api/[controller]")]
     public class TiposProductoController : ControllerBase
     {
-        private readonly ControlInventarioDBContext _ctx;
+        private readonly ITipoProductoBusiness _tipoProductoBusiness;
 
-        public TiposProductoController(ControlInventarioDBContext ctx)
+        public TiposProductoController(ITipoProductoBusiness tipoProductoBusiness)
         {
-            _ctx = ctx;
+            _tipoProductoBusiness = tipoProductoBusiness;
         }
 
         // GET: api/TiposProducto
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TipoProductoDTO>>> GetAll()
         {
-            var lista = await _ctx.TiposProducto
-                .OrderBy(t => t.NombreTipo)
-                .Select(t => new TipoProductoDTO
-                {
-                    IdTipoProducto = t.IdTipoProducto,
-                    NombreTipo = t.NombreTipo
-                })
-                .ToListAsync();
-
+            var lista = await _tipoProductoBusiness.GetAllAsync();
             return Ok(lista);
         }
 
@@ -36,15 +27,7 @@ namespace ProyectoFinal.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<TipoProductoDTO>> GetById(int id)
         {
-            var dto = await _ctx.TiposProducto
-                .Where(t => t.IdTipoProducto == id)
-                .Select(t => new TipoProductoDTO
-                {
-                    IdTipoProducto = t.IdTipoProducto,
-                    NombreTipo = t.NombreTipo
-                })
-                .FirstOrDefaultAsync();
-
+            var dto = await _tipoProductoBusiness.GetByIdAsync(id);
             if (dto == null) return NotFound();
 
             return Ok(dto);
@@ -54,16 +37,10 @@ namespace ProyectoFinal.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<bool>> Create([FromBody] TipoProductoDTO dto)
         {
-            if (dto is null || string.IsNullOrWhiteSpace(dto.NombreTipo))
-                return BadRequest(false);
+            if (dto is null) return BadRequest(false);
 
-            var entity = new TipoProducto
-            {
-                NombreTipo = dto.NombreTipo
-            };
-
-            _ctx.TiposProducto.Add(entity);
-            await _ctx.SaveChangesAsync();
+            var ok = await _tipoProductoBusiness.CreateAsync(dto);
+            if (!ok) return BadRequest(false);
 
             return Ok(true);
         }
@@ -72,14 +49,8 @@ namespace ProyectoFinal.Api.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<bool>> Update(int id, [FromBody] TipoProductoDTO dto)
         {
-            var entity = await _ctx.TiposProducto.FindAsync(id);
-            if (entity == null) return NotFound(false);
-
-            if (string.IsNullOrWhiteSpace(dto.NombreTipo))
-                return BadRequest(false);
-
-            entity.NombreTipo = dto.NombreTipo;
-            await _ctx.SaveChangesAsync();
+            var ok = await _tipoProductoBusiness.UpdateAsync(id, dto);
+            if (!ok) return NotFound(false);
 
             return Ok(true);
         }
@@ -88,11 +59,9 @@ namespace ProyectoFinal.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<bool>> Delete(int id)
         {
-            var entity = await _ctx.TiposProducto.FindAsync(id);
-            if (entity == null) return NotFound(false);
+            var ok = await _tipoProductoBusiness.DeleteAsync(id);
+            if (!ok) return NotFound(false);
 
-            _ctx.TiposProducto.Remove(entity);
-            await _ctx.SaveChangesAsync();
             return Ok(true);
         }
     }

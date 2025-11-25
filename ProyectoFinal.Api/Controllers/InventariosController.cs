@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProyectoFinal.Data.Models;
+using ProyectoFinal.Core.BusinessLogic;
 using ProyectoFinal.Models.DTOs;
 
 namespace ProyectoFinal.Api.Controllers
@@ -9,29 +8,18 @@ namespace ProyectoFinal.Api.Controllers
     [Route("api/[controller]")]
     public class InventariosController : ControllerBase
     {
-        private readonly ControlInventarioDBContext _ctx;
+        private readonly IInventarioBusiness _inventarioBusiness;
 
-        public InventariosController(ControlInventarioDBContext ctx)
+        public InventariosController(IInventarioBusiness inventarioBusiness)
         {
-            _ctx = ctx;
+            _inventarioBusiness = inventarioBusiness;
         }
 
         // GET: api/inventarios
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventarioDTO>>> GetAll()
         {
-            var lista = await _ctx.Inventarios
-                .Include(i => i.Producto)
-                .OrderBy(i => i.IdInventario)
-                .Select(i => new InventarioDTO
-                {
-                    IdInventario = i.IdInventario,
-                    IdProducto = i.IdProducto,
-                    NombreProducto = i.Producto.Nombre,
-                    Cantidad = i.Cantidad
-                })
-                .ToListAsync();
-
+            var lista = await _inventarioBusiness.GetAllAsync();
             return Ok(lista);
         }
 
@@ -39,22 +27,11 @@ namespace ProyectoFinal.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<InventarioDTO>> GetById(int id)
         {
-            var inventario = await _ctx.Inventarios
-                .Include(i => i.Producto)
-                .Where(i => i.IdInventario == id)
-                .Select(i => new InventarioDTO
-                {
-                    IdInventario = i.IdInventario,
-                    IdProducto = i.IdProducto,
-                    NombreProducto = i.Producto.Nombre,
-                    Cantidad = i.Cantidad
-                })
-                .FirstOrDefaultAsync();
-
-            if (inventario == null)
+            var dto = await _inventarioBusiness.GetByIdAsync(id);
+            if (dto is null)
                 return NotFound();
 
-            return Ok(inventario);
+            return Ok(dto);
         }
 
         // POST: api/inventarios
@@ -64,33 +41,10 @@ namespace ProyectoFinal.Api.Controllers
             if (dto == null)
                 return BadRequest("Datos requeridos.");
 
-            if (dto.IdProducto <= 0 || dto.Cantidad < 0)
-                return BadRequest("Datos inválidos.");
+            var ok = await _inventarioBusiness.CreateAsync(dto);
+            if (!ok)
+                return BadRequest("Datos inválidos o producto inexistente.");
 
-            // Validar producto
-            var productoExiste = await _ctx.Productos.AnyAsync(p => p.IdProducto == dto.IdProducto);
-            if (!productoExiste)
-                return BadRequest("El producto no existe.");
-
-            // ¿Ya existe inventario para ese producto?
-            var inventario = await _ctx.Inventarios.FirstOrDefaultAsync(i => i.IdProducto == dto.IdProducto);
-
-            if (inventario == null)
-            {
-                inventario = new Inventario
-                {
-                    IdProducto = dto.IdProducto,
-                    Cantidad = dto.Cantidad
-                };
-
-                _ctx.Inventarios.Add(inventario);
-            }
-            else
-            {
-                inventario.Cantidad += dto.Cantidad;
-            }
-
-            await _ctx.SaveChangesAsync();
             return Ok(true);
         }
 
@@ -101,22 +55,10 @@ namespace ProyectoFinal.Api.Controllers
             if (dto == null)
                 return BadRequest("Datos requeridos.");
 
-            if (dto.IdProducto <= 0 || dto.Cantidad < 0)
-                return BadRequest("Datos inválidos.");
-
-            var inventario = await _ctx.Inventarios.FindAsync(id);
-            if (inventario == null)
+            var ok = await _inventarioBusiness.UpdateAsync(id, dto);
+            if (!ok)
                 return NotFound(false);
 
-            // Validar producto
-            var productoExiste = await _ctx.Productos.AnyAsync(p => p.IdProducto == dto.IdProducto);
-            if (!productoExiste)
-                return BadRequest("El producto no existe.");
-
-            inventario.IdProducto = dto.IdProducto;
-            inventario.Cantidad = dto.Cantidad;
-
-            await _ctx.SaveChangesAsync();
             return Ok(true);
         }
 
@@ -124,12 +66,9 @@ namespace ProyectoFinal.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var inventario = await _ctx.Inventarios.FindAsync(id);
-            if (inventario == null)
+            var ok = await _inventarioBusiness.DeleteAsync(id);
+            if (!ok)
                 return NotFound(false);
-
-            _ctx.Inventarios.Remove(inventario);
-            await _ctx.SaveChangesAsync();
 
             return Ok(true);
         }

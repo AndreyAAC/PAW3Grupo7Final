@@ -30,7 +30,7 @@ namespace ProyectoFinal.Mvc.Controllers
                 Tipos = tipos
             };
 
-            return View(vm); // Views/TiposProducto/Index.cshtml
+            return View(vm);
         }
 
         // GET: /TiposProducto/Edit/5

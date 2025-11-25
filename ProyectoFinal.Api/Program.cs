@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using ProyectoFinal.Core.BusinessLogic;
 using ProyectoFinal.Data.Models;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ControlInventarioDBContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("ControlInventarioDB")));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -19,9 +20,20 @@ builder.Services.AddCors(corsOptions => corsOptions.AddPolicy("ControlInventario
     .AllowAnyMethod()
     .WithOrigins("https://localhost:7127", "http://localhost:5055")));
 
+
+// DI de Business 
+builder.Services.AddScoped<IProductoBusiness, ProductoBusiness>();
+builder.Services.AddScoped<ITipoProductoBusiness, TipoProductoBusiness>();
+builder.Services.AddScoped<IInventarioBusiness, InventarioBusiness>();
+builder.Services.AddScoped<IGastoBusiness, GastoBusiness>();
+
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 app.UseCors("ControlInventarioClient");

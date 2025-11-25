@@ -36,7 +36,7 @@ namespace ProyectoFinal.Mvc.Controllers
                 Productos = productos
             };
 
-            return View(vm); // Views/Inventario/Index.cshtml
+            return View(vm);
         }
 
         // GET: /Inventario/Edit/5
@@ -80,8 +80,6 @@ namespace ProyectoFinal.Mvc.Controllers
 
             var client = GetInventariosClient();
             var response = await client.PutAsJsonAsync($"api/inventarios/{IdInventario}", dto);
-
-            // Si quieres manejar errores sin romper, puedes reemplazar esto por un if (!response.IsSuccessStatusCode)...
             response.EnsureSuccessStatusCode();
 
             return RedirectToAction(nameof(Index));
@@ -110,7 +108,6 @@ namespace ProyectoFinal.Mvc.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 var detalle = await response.Content.ReadAsStringAsync();
-                // Guardamos el detalle para verlo en la vista
                 TempData["ErrorInventario"] =
                     $"Error al crear inventario. Status: {(int)response.StatusCode} ({response.StatusCode}). Detalle: {detalle}";
                 return RedirectToAction(nameof(Index));

@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using ProyectoFinal.Core.BusinessLogic;
 using ProyectoFinal.Data.Models;
 using ProyectoFinal.Models.DTOs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ControlInventarioDBContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("ControlInventarioDB")));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("ControlInventario")));
 
-// CORS (ajusta orígenes según tu MVC)
 builder.Services.AddCors(o => o.AddPolicy("ControlInventarioClient", p => p
     .AllowAnyHeader()
     .AllowAnyMethod()
@@ -18,6 +19,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Minimal API - Cuentas por Pagar", Version = "v1" });
 });
+
+// DI de Business 
+builder.Services.AddScoped<ICuentaPagarBusiness, CuentaPagarBusiness>();
 
 var app = builder.Build();
 
@@ -32,75 +36,47 @@ app.MapGet("/", () => Results.Redirect("/swagger"));
 app.UseHttpsRedirection();
 app.UseCors("ControlInventarioClient");
 
-// ===== Minimal API: CUENTAS POR PAGAR =====
+//  Minimal API: CUENTAS POR PAGAR 
 var cuentas = app.MapGroup("/cuentas-pagar");
 
 // GET /cuentas-pagar
-cuentas.MapGet("/", async (ControlInventarioDBContext db) =>
+cuentas.MapGet("/", async (ICuentaPagarBusiness business) =>
 {
-    var data = await db.CuentasPorPagar
-        .OrderByDescending(c => c.FechaCuentaPagar)
-        .ThenByDescending(c => c.IdCuentaPagar)
-        .Select(c => new
-        {
-            c.IdCuentaPagar,
-            c.Motivo,
-            c.FechaCuentaPagar,
-            c.Descripcion,
-            c.Monto,
-            c.PlazoPagar
-        })
-        .ToListAsync();
+    var data = await business.GetAllAsync();
     return Results.Ok(data);
 });
 
 // GET /cuentas-pagar/{id}
-cuentas.MapGet("/{id:int}", async (int id, ControlInventarioDBContext db) =>
+cuentas.MapGet("/{id:int}", async (int id, ICuentaPagarBusiness business) =>
 {
-    var c = await db.CuentasPorPagar.FindAsync(id);
-    return c is null ? Results.NotFound() : Results.Ok(c);
+    var dto = await business.GetByIdAsync(id);
+    return dto is null ? Results.NotFound() : Results.Ok(dto);
 });
 
 // POST /cuentas-pagar
-cuentas.MapPost("/", async (ControlInventarioDBContext db, CuentaPagarDTO dto) =>
+cuentas.MapPost("/", async (ICuentaPagarBusiness business, CuentaPagarDTO dto) =>
 {
-    var entity = new CuentasPagar
-    {
-        Motivo = dto.Motivo,
-        FechaCuentaPagar = dto.FechaCuentaPagar,
-        Descripcion = dto.Descripcion,
-        Monto = dto.Monto,
-        PlazoPagar = dto.PlazoPagar
-    };
-    db.CuentasPorPagar.Add(entity);
-    await db.SaveChangesAsync();
+    var ok = await business.CreateAsync(dto);
+    if (!ok) return Results.BadRequest(false);
+
     return Results.Ok(true);
 });
 
 // PUT /cuentas-pagar/{id}
-cuentas.MapPut("/{id:int}", async (int id, ControlInventarioDBContext db, CuentaPagarDTO dto) =>
+cuentas.MapPut("/{id:int}", async (int id, ICuentaPagarBusiness business, CuentaPagarDTO dto) =>
 {
-    var entity = await db.CuentasPorPagar.FindAsync(id);
-    if (entity is null) return Results.NotFound(false);
+    var ok = await business.UpdateAsync(id, dto);
+    if (!ok) return Results.NotFound(false);
 
-    entity.Motivo = dto.Motivo;
-    entity.FechaCuentaPagar = dto.FechaCuentaPagar;
-    entity.Descripcion = dto.Descripcion;
-    entity.Monto = dto.Monto;
-    entity.PlazoPagar = dto.PlazoPagar;
-
-    await db.SaveChangesAsync();
     return Results.Ok(true);
 });
 
 // DELETE /cuentas-pagar/{id}
-cuentas.MapDelete("/{id:int}", async (int id, ControlInventarioDBContext db) =>
+cuentas.MapDelete("/{id:int}", async (int id, ICuentaPagarBusiness business) =>
 {
-    var entity = await db.CuentasPorPagar.FindAsync(id);
-    if (entity is null) return Results.NotFound(false);
+    var ok = await business.DeleteAsync(id);
+    if (!ok) return Results.NotFound(false);
 
-    db.CuentasPorPagar.Remove(entity);
-    await db.SaveChangesAsync();
     return Results.Ok(true);
 });
 

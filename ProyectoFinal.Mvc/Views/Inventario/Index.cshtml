@@ -27,7 +27,6 @@
         </button>
     </div>
 
-    <!-- Formulario para crear registro de inventario -->
     <div id="crearInventario" class="collapse mt-3">
         <form method="post" asp-controller="Inventario" asp-action="Create">
             @Html.AntiForgeryToken()
@@ -55,7 +54,6 @@
         </form>
     </div>
 
-    <!-- Tabla de inventario -->
     <div class="table-responsive mt-3">
         <table class="table table-striped table-hover align-middle">
             <thead>
@@ -99,12 +97,10 @@
     </div>
 </div>
 
-<!-- Modal para editar inventario -->
 <div class="modal fade" id="modalEditarInventario" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body" id="modalEditarInventarioBody">
-                <!-- Aquí se carga _EditInventario vía AJAX -->
             </div>
         </div>
     </div>

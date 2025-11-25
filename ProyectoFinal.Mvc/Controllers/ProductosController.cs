@@ -36,7 +36,7 @@ namespace ProyectoFinal.Mvc.Controllers
                 TiposProducto = tipos
             };
 
-            return View(vm); // Views/Productos/Index.cshtml
+            return View(vm);
         }
 
         // GET: /Productos/Edit/5
@@ -58,7 +58,6 @@ namespace ProyectoFinal.Mvc.Controllers
                 TiposProducto = tipos
             };
 
-            // Partial para el modal
             return PartialView("_EditProducto", vm);
         }
 
@@ -69,7 +68,6 @@ namespace ProyectoFinal.Mvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Si hay errores, devolvemos el mismo modal con la data
                 return PartialView("_EditProducto", vm);
             }
 
@@ -87,7 +85,6 @@ namespace ProyectoFinal.Mvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Para no complicarnos, redirigimos al Index, que recarga todo
                 return RedirectToAction(nameof(Index));
             }
 

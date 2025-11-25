@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProyectoFinal.Data.Models;
+using ProyectoFinal.Core.BusinessLogic;
 using ProyectoFinal.Models.DTOs;
 
 namespace ProyectoFinal.Api.Controllers
@@ -9,56 +8,28 @@ namespace ProyectoFinal.Api.Controllers
     [Route("api/[controller]")]
     public class GastosController : ControllerBase
     {
-        private readonly ControlInventarioDBContext _ctx;
+        private readonly IGastoBusiness _gastoBusiness;
 
-        public GastosController(ControlInventarioDBContext ctx)
+        public GastosController(IGastoBusiness gastoBusiness)
         {
-            _ctx = ctx;
+            _gastoBusiness = gastoBusiness;
         }
 
         // GET: api/gastos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GastoDTO>>> GetAll()
         {
-            var query = from g in _ctx.Gastos
-                        join c in _ctx.CategoriasGasto on g.IdCategoriaGasto equals c.IdCategoriaGasto into cg
-                        from c in cg.DefaultIfEmpty()
-                        orderby g.FechaGasto descending, g.IdGasto descending
-                        select new GastoDTO
-                        {
-                            IdGasto = g.IdGasto,
-                            Motivo = g.Motivo,
-                            FechaGasto = g.FechaGasto,
-                            Descripcion = g.Descripcion,
-                            Monto = g.Monto,
-                            IdCategoriaGasto = g.IdCategoriaGasto,
-                            NombreCategoria = c != null ? c.NombreCategoria : null
-                        };
-
-            return Ok(await query.ToListAsync());
+            var lista = await _gastoBusiness.GetAllAsync();
+            return Ok(lista);
         }
 
         // GET: api/gastos/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<GastoDTO>> GetById(int id)
         {
-            var result = await (from g in _ctx.Gastos
-                                join c in _ctx.CategoriasGasto on g.IdCategoriaGasto equals c.IdCategoriaGasto into cg
-                                from c in cg.DefaultIfEmpty()
-                                where g.IdGasto == id
-                                select new GastoDTO
-                                {
-                                    IdGasto = g.IdGasto,
-                                    Motivo = g.Motivo,
-                                    FechaGasto = g.FechaGasto,
-                                    Descripcion = g.Descripcion,
-                                    Monto = g.Monto,
-                                    IdCategoriaGasto = g.IdCategoriaGasto,
-                                    NombreCategoria = c != null ? c.NombreCategoria : null
-                                }).FirstOrDefaultAsync();
-
-            if (result == null) return NotFound();
-            return Ok(result);
+            var dto = await _gastoBusiness.GetByIdAsync(id);
+            if (dto is null) return NotFound();
+            return Ok(dto);
         }
 
         // POST: api/gastos
@@ -67,17 +38,9 @@ namespace ProyectoFinal.Api.Controllers
         {
             if (dto is null) return BadRequest(false);
 
-            var entity = new Gasto
-            {
-                Motivo = dto.Motivo,
-                FechaGasto = dto.FechaGasto,
-                Descripcion = dto.Descripcion,
-                Monto = dto.Monto,
-                IdCategoriaGasto = dto.IdCategoriaGasto
-            };
+            var ok = await _gastoBusiness.CreateAsync(dto);
+            if (!ok) return BadRequest(false);
 
-            _ctx.Gastos.Add(entity);
-            await _ctx.SaveChangesAsync();
             return Ok(true);
         }
 
@@ -85,16 +48,9 @@ namespace ProyectoFinal.Api.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<bool>> Update(int id, [FromBody] GastoDTO dto)
         {
-            var entity = await _ctx.Gastos.FindAsync(id);
-            if (entity == null) return NotFound(false);
+            var ok = await _gastoBusiness.UpdateAsync(id, dto);
+            if (!ok) return NotFound(false);
 
-            entity.Motivo = dto.Motivo;
-            entity.FechaGasto = dto.FechaGasto;
-            entity.Descripcion = dto.Descripcion;
-            entity.Monto = dto.Monto;
-            entity.IdCategoriaGasto = dto.IdCategoriaGasto;
-
-            await _ctx.SaveChangesAsync();
             return Ok(true);
         }
 
@@ -102,11 +58,9 @@ namespace ProyectoFinal.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<bool>> Delete(int id)
         {
-            var entity = await _ctx.Gastos.FindAsync(id);
-            if (entity == null) return NotFound(false);
+            var ok = await _gastoBusiness.DeleteAsync(id);
+            if (!ok) return NotFound(false);
 
-            _ctx.Gastos.Remove(entity);
-            await _ctx.SaveChangesAsync();
             return Ok(true);
         }
     }
