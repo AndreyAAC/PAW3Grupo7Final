@@ -15,6 +15,11 @@ namespace ProyectoFinal.Mvc.Controllers
 
         public IActionResult Index()
         {
+            if (!HttpContext.Session.Keys.Contains("UserId"))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             return View();
         }
 

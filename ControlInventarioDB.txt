@@ -224,10 +224,131 @@ CREATE TABLE dbo.CuentasPagar (
 GO
 
 
-INSERT INTO dbo.EstadoPedido (NombreEstado)
-VALUES (N'Pendiente'), (N'En Proceso'), (N'Entregado'), (N'Cancelado');
+/* =========================================================
+   Insert Role
+   ========================================================= */
+SET IDENTITY_INSERT Role ON;
 
--- INSERTs opcionales para TipoProducto / CategoriaGasto:
--- INSERT INTO dbo.TipoProducto (NombreTipo) VALUES (N'Electrónica'), (N'Hogar');
--- INSERT INTO dbo.CategoriaGasto (NombreCategoria) VALUES (N'Servicios'), (N'Insumos');
-GO
+INSERT INTO Role (IdRole, NombreRole)
+VALUES (1, 'Usuario');
+INSERT INTO Role (idRole, NombreRole)
+VALUES (2, 'Admin');
+
+/* =========================================================
+   Insert Usuario
+   ========================================================= */
+
+INSERT INTO Usuario (nombreUsuario, nombreApellido, correo, cedula, telefono, contrasenia, role)
+VALUES
+('Test', 'Test', 'test@test.com', '101230456', '88881234', '12345', 1),
+('admin', 'Gómez', 'admin@admin.com', '207800999', '89993344', 'admin', 2);
+
+/* =========================================================
+   Insert CategoriaGasto
+   ========================================================= */
+
+INSERT INTO CategoriaGasto (NombreCategoria)
+VALUES
+('Servicios'),
+('Papelería'),
+('Transporte');
+
+/* =========================================================
+   Insert Gasto
+   ========================================================= */
+
+INSERT INTO Gasto (motivo, fechaGasto, descripcion, monto, idCategoriaGasto)
+VALUES
+('Compra de tinta', '2025-01-05', 'Tinta para impresora', 8500, 2),
+('Pago de internet', '2025-01-10', 'Servicio mensual', 23000, 1),
+('Taxi para entrega', '2025-01-15', 'Transporte express', 6500, 3);
+
+
+/* =========================================================
+   Insert CuentasPagar
+   ========================================================= */
+
+INSERT INTO CuentasPagar (motivo, fechaCuentaPagar, descripcion, monto, plazoPagar)
+VALUES
+('Pago proveedor A', '2025-02-01', 'Factura 2345', 150000, '15 días'),
+('Alquiler bodega', '2025-02-05', 'Pago mensual', 200000, '30 días');
+
+
+/* =========================================================
+   Insert TipoProducto
+   ========================================================= */
+
+INSERT INTO TipoProducto (NombreTipo)
+VALUES
+('Bebida'),
+('Comida'),
+('Accesorio');
+
+/* =========================================================
+   Insert Producto
+   ========================================================= */
+
+INSERT INTO Producto (nombre, imagen, descripcion, precio, idTipoProducto)
+VALUES
+('Coca Cola', 'https://img.com/coca.jpg', 'Bebida gaseosa 350ml', 900, 1),
+('Hamburguesa', 'https://img.com/burger.jpg', 'Hamburguesa sencilla', 2500, 2),
+('Llaveros', 'https://img.com/key.jpg', 'Llavero metálico', 1200, 3);
+
+/* =========================================================
+   Insert Inventario
+   ========================================================= */
+
+INSERT INTO Inventario (idProducto, cantidad)
+VALUES
+(1, 50),
+(2, 25),
+(3, 100);
+
+/* =========================================================
+   Insert Cliente
+   ========================================================= */
+
+INSERT INTO Cliente (nombre, telefono, correo)
+VALUES
+('Juan Pérez', '88885555', 'juan@correo.com'),
+('Laura Campos', '89997766', 'laura@correo.com');
+
+/* =========================================================
+   Insert EstadoPedido
+   ========================================================= */
+
+INSERT INTO EstadoPedido (NombreEstado)
+VALUES
+('Pendiente'),
+('Completado'),
+('Cancelado');
+
+/* =========================================================
+   Insert Pedido
+   ========================================================= */
+
+INSERT INTO Pedido (fechaDeInicio, fechaDeEntrega, idEstadoPedido)
+VALUES
+('2025-02-10', '2025-02-15', 1),
+('2025-02-11', '2025-02-16', 1),
+('2025-02-12', '2025-02-17', 2);
+
+/* =========================================================
+   Insert PedidoDetalle
+   ========================================================= */
+
+INSERT INTO PedidoDetalle (idPedido, idProducto, cantidad, precioUnitario)
+VALUES
+(1, 1, 2, 900),
+(1, 2, 1, 2500),
+(2, 3, 3, 1200),
+(3, 2, 2, 2500);
+
+/* =========================================================
+   Insert Cita
+   ========================================================= */
+
+INSERT INTO Cita (idCliente, Motivo, producto, detalle, FechaCita, HoraCita)
+VALUES
+('1', 'Consulta general', '1', 'Consulta de precio', '2025-02-20', '14:30:00'),
+('2', 'Revisión producto', '2', 'Revision de garantia', '2025-02-21', '15:30:00');

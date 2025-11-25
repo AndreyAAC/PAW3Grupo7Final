@@ -2,11 +2,30 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthentication("CookieAuth")
+    .AddCookie("CookieAuth", options =>
+    {
+        options.LoginPath = "/Auth/Login";      // Regresa a login, si no se ha logeado
+        options.AccessDeniedPath = "/Auth/Login";
+    });
+
+
 builder.Services.AddControllersWithViews();
+
+// Cache + Session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddHttpContextAccessor();
+
 
 builder.Services.AddHttpClient("ApiGastos", client =>
 {
@@ -20,7 +39,7 @@ builder.Services.AddHttpClient("ApiCuentas", client =>
 
 builder.Services.AddHttpClient("ApiProductos", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7153/"); // mismo puerto que la API de Gastos
+    client.BaseAddress = new Uri("https://localhost:7153/");
 });
 
 builder.Services.AddHttpClient("ApiInventarios", client =>
@@ -29,6 +48,11 @@ builder.Services.AddHttpClient("ApiInventarios", client =>
 });
 
 builder.Services.AddHttpClient("ApiTiposProducto", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7153/");
+});
+
+builder.Services.AddHttpClient("ApiAuth", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7153/");
 });
@@ -43,11 +67,16 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
+app.UseSession();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();

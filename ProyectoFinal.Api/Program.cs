@@ -26,6 +26,8 @@ builder.Services.AddScoped<IProductoBusiness, ProductoBusiness>();
 builder.Services.AddScoped<ITipoProductoBusiness, TipoProductoBusiness>();
 builder.Services.AddScoped<IInventarioBusiness, InventarioBusiness>();
 builder.Services.AddScoped<IGastoBusiness, GastoBusiness>();
+builder.Services.AddScoped<IUsuarioBusiness, UsuarioBusiness>();
+
 
 var app = builder.Build();
 

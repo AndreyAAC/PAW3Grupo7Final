@@ -20,3 +20,29 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.menu-link {
+    position: relative;
+    padding-bottom: 3px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+    .menu-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        width: 0;
+        background-color: #0d6efd;
+        transition: width 0.2s ease;
+    }
+
+    .menu-link:hover {
+        color: #0d6efd;
+        transform: translateY(-1px);
+    }
+
+        .menu-link:hover::after {
+            width: 100%;
+        }
