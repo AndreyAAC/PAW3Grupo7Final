@@ -1,37 +1,43 @@
 using Microsoft.AspNetCore.Mvc;
-using ProyectoFinal.Mvc.Models;
-using System.Diagnostics;
+using ProyectoFinal.Mvc.Models.Home;
+using ProyectoFinal.Models.DTOs;
+using System.Net.Http.Json;
 
-namespace ProyectoFinal.Mvc.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly IHttpClientFactory _clientFactory;
+
+    public HomeController(IHttpClientFactory clientFactory)
     {
-        private readonly ILogger<HomeController> _logger;
+        _clientFactory = clientFactory;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+    private HttpClient ApiGastos => _clientFactory.CreateClient("ApiGastos");
+    private HttpClient ApiCuentas => _clientFactory.CreateClient("ApiCuentas");
+    private HttpClient ApiProductos => _clientFactory.CreateClient("ApiProductos");
 
-        public IActionResult Index()
-        {
-            if (!HttpContext.Session.Keys.Contains("UserId"))
-            {
-                return RedirectToAction("Login", "Account");
-            }
+    public async Task<IActionResult> Index()
+    {
+        var vm = new DashboardVM();
 
-            return View();
-        }
+        // Total de productos
+        var productos = await ApiProductos.GetFromJsonAsync<List<ProductoDTO>>("api/Productos");
+        vm.TotalProductos = productos?.Count ?? 0;
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        // Gastos de HOY
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        var gastos = await ApiGastos.GetFromJsonAsync<List<GastoDTO>>("api/Gastos");
+
+        vm.GastosHoy = gastos?
+            .Where(g => g.FechaGasto == DateOnly.FromDateTime(DateTime.Today))
+            .Sum(g => g.Monto) ?? 0;
+
+        // Cuentas pendientes
+ 
+        var cuentas = await ApiCuentas.GetFromJsonAsync<List<CuentaPagarDTO>>("cuentas-pagar");
+
+        vm.CuentasPendientes = cuentas?.Count ?? 0;
+
+        return View(vm);
     }
 }

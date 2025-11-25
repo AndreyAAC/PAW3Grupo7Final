@@ -1,171 +1,166 @@
-﻿@{
+﻿@model ProyectoFinal.Mvc.Models.Home.DashboardVM
+@{
     ViewData["Title"] = "Inicio";
 }
 
-<div class="dashboard">
+<div class="container my-4 dashboard-root">
 
-    <section class="dashboard-hero mb-4">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="dashboard-title mb-2">Bienvenido al Panel de Control</h1>
-                <p class="dashboard-subtitle mb-3">
-                    Administra tus <strong>gastos</strong>, <strong>cuentas por pagar</strong> e <strong>inventario</strong>
-                    desde un solo lugar. Usa los accesos rápidos para navegar entre los módulos.
+    <div class="row g-3">
+        <div class="col-lg-9">
+            <div class="dashboard-hero-main shadow-sm">
+                <h2 class="mb-2 fw-bold text-white">Bienvenido al Panel de Control</h2>
+                <p class="mb-3 text-hero-subtitle">
+                    Administra tus <strong>gastos</strong>, <strong>cuentas por pagar</strong> e
+                    <strong>inventario</strong> desde un solo lugar.
+                    Usa los accesos rápidos para navegar entre los módulos.
                 </p>
 
                 <div class="d-flex flex-wrap gap-2">
-                    <a asp-controller="Gastos" asp-action="Index" class="btn btn-light btn-sm px-3">
-                        💸 Ver Gastos
+                    <a asp-controller="Gastos" asp-action="Index"
+                       class="btn btn-light btn-sm d-inline-flex align-items-center hero-btn-primary">
+                        <span class="me-2">💵</span> Ver Gastos
                     </a>
-                    <a asp-controller="CuentasPagar" asp-action="Index" class="btn btn-outline-light btn-sm px-3">
-                        🧾 Cuentas por Pagar
-                    </a>
-                    <a asp-controller="Inventario" asp-action="Index" class="btn btn-outline-light btn-sm px-3">
-                        📦 Inventario
-                    </a>
-                </div>
-            </div>
 
-            <div class="col-md-4 d-none d-md-block">
-                <div class="dashboard-hero-card text-center">
-                    <p class="mb-1 text-uppercase small text-muted">Resumen rápido</p>
-                    <div class="d-flex justify-content-between mb-2">
-                        <div>
-                            <span class="hero-number">--</span>
-                            <div class="hero-label">Productos</div>
-                        </div>
-                        <div>
-                            <span class="hero-number">--</span>
-                            <div class="hero-label">Gastos hoy</div>
-                        </div>
-                        <div>
-                            <span class="hero-number">--</span>
-                            <div class="hero-label">Cuentas pendientes</div>
-                        </div>
-                    </div>
-                    <small class="text-muted">Estos datos se pueden conectar luego a la base de datos.</small>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="mb-4">
-        <div class="row g-3">
-            <div class="col-md-4">
-                <div class="dashboard-card h-100">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="mb-0">Gastos</h5>
-                        <span class="status-pill status-pill-warning">Finanzas</span>
-                    </div>
-                    <p class="text-muted mb-3">
-                        Registra y consulta los movimientos de gasto para mantener un control claro de las salidas de dinero.
-                    </p>
-                    <a asp-controller="Gastos" asp-action="Index" class="dashboard-link">
-                        Ir a Gastos →
+                    <a asp-controller="CuentasPagar" asp-action="Index"
+                       class="btn btn-outline-light btn-sm d-inline-flex align-items-center hero-btn-secondary">
+                        <span class="me-2">📑</span> Cuentas por Pagar
                     </a>
-                </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="dashboard-card h-100">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="mb-0">Cuentas por Pagar</h5>
-                        <span class="status-pill status-pill-danger">Pendientes</span>
-                    </div>
-                    <p class="text-muted mb-3">
-                        Administra obligaciones pendientes, fechas límite y montos a pagar para evitar atrasos.
-                    </p>
-                    <a asp-controller="CuentasPagar" asp-action="Index" class="dashboard-link">
-                        Ver Cuentas por Pagar →
-                    </a>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="dashboard-card h-100">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="mb-0">Inventario</h5>
-                        <span class="status-pill status-pill-info">Operativo</span>
-                    </div>
-                    <p class="text-muted mb-3">
-                        Controla existencias, movimientos y productos disponibles para venta o uso interno.
-                    </p>
-                    <a asp-controller="Inventario" asp-action="Index" class="dashboard-link">
-                        Ir al Inventario →
+                    <a asp-controller="Inventario" asp-action="Index"
+                       class="btn btn-outline-light btn-sm d-inline-flex align-items-center hero-btn-secondary">
+                        <span class="me-2">📦</span> Inventario
                     </a>
                 </div>
             </div>
         </div>
-    </section>
 
-    <section class="mb-4">
-        <div class="row g-3">
-            <div class="col-md-6">
-                <div class="dashboard-card h-100">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="mb-0">Productos</h5>
-                        <span class="status-pill status-pill-success">Catálogo</span>
+        <div class="col-lg-3">
+            <div class="dashboard-hero-summary shadow-sm text-center">
+                <p class="mb-2 text-uppercase small text-muted">Resumen rápido</p>
+
+                <div class="hero-summary-grid mb-2">
+                    <div>
+                        <div class="hero-summary-label">Productos</div>
+                        <div class="hero-summary-value">@Model.TotalProductos</div>
                     </div>
-                    <p class="text-muted mb-3">
-                        Administra el catálogo de productos, sus precios, descripciones e imágenes.
-                    </p>
-                    <a asp-controller="Productos" asp-action="Index" class="dashboard-link">
-                        Gestionar Productos →
-                    </a>
+                    <div>
+                        <div class="hero-summary-label">Gastos hoy</div>
+                        <div class="hero-summary-value">₡@Model.GastosHoy.ToString("N2")</div>
+                    </div>
+                    <div>
+                        <div class="hero-summary-label">Cuentas pendientes</div>
+                        <div class="hero-summary-value">@Model.CuentasPendientes</div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-6">
-                <div class="dashboard-card h-100">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="mb-0">Tipos de Producto</h5>
-                        <span class="status-pill status-pill-neutral">Configuración</span>
-                    </div>
-                    <p class="text-muted mb-3">
-                        Organiza los productos por tipo para facilitar búsquedas, reportes y control del inventario.
-                    </p>
-                    <a asp-controller="TiposProducto" asp-action="Index" class="dashboard-link">
-                        Ver Tipos de Producto →
+                <small class="text-muted">
+                    Estos datos se cargan directamente desde la base de datos.
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-4">
+        <div class="col-lg-4">
+            <div class="module-card shadow-sm">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="mb-0">Gastos</h5>
+                    <span class="module-tag module-tag-yellow">FINANZAS</span>
+                </div>
+                <p class="text-muted small mb-3">
+                    Registra y consulta los movimientos de gasto para mantener un control claro de las salidas de dinero.
+                </p>
+                <a asp-controller="Gastos" asp-action="Index" class="module-link">Ir a Gastos →</a>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="module-card shadow-sm">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="mb-0">Cuentas por Pagar</h5>
+                    <span class="module-tag module-tag-red">PENDIENTES</span>
+                </div>
+                <p class="text-muted small mb-3">
+                    Administra obligaciones pendientes, fechas límite y montos a pagar para evitar atrasos.
+                </p>
+                <a asp-controller="CuentasPagar" asp-action="Index" class="module-link">Ver Cuentas por Pagar →</a>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="module-card shadow-sm">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="mb-0">Inventario</h5>
+                    <span class="module-tag module-tag-green">OPERATIVO</span>
+                </div>
+                <p class="text-muted small mb-3">
+                    Controla existencias, movimientos y productos disponibles para venta o uso interno.
+                </p>
+                <a asp-controller="Inventario" asp-action="Index" class="module-link">Ir al Inventario →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-3">
+        <div class="col-lg-6">
+            <div class="module-card shadow-sm">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="mb-0">Productos</h5>
+                    <span class="module-tag module-tag-green-soft">CATÁLOGO</span>
+                </div>
+                <p class="text-muted small mb-3">
+                    Administra el catálogo de productos, sus precios, descripciones e imágenes.
+                </p>
+                <a asp-controller="Productos" asp-action="Index" class="module-link">Gestionar Productos →</a>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="module-card shadow-sm">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="mb-0">Tipos de Producto</h5>
+                    <span class="module-tag module-tag-gray">CONFIGURACIÓN</span>
+                </div>
+                <p class="text-muted small mb-3">
+                    Organiza los productos por tipo para facilitar búsquedas, reportes y control del inventario.
+                </p>
+                <a asp-controller="TiposProducto" asp-action="Index" class="module-link">Ver Tipos de Producto →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-3 mb-4">
+        <div class="col-lg-7">
+            <div class="module-card shadow-sm">
+                <h5 class="mb-3">Sugerencias de uso</h5>
+                <ul class="text-muted small mb-0">
+                    <li>Revisa los gastos al menos una vez al día para mantener tus registros al día.</li>
+                    <li>Usa el módulo de Cuentas por Pagar para priorizar pagos según su fecha límite.</li>
+                    <li>Actualiza el inventario cuando entren o salgan productos para evitar diferencias físicas.</li>
+                    <li>Clasifica bien tus productos por tipo para mejorar la organización general del sistema.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="module-card shadow-sm">
+                <h5 class="mb-3 text-center">Accesos rápidos</h5>
+                <div class="d-grid gap-2">
+                    <a asp-controller="Gastos" asp-action="Index" class="quick-action-btn">
+                        + Registrar nuevo gasto
+                    </a>
+                    <a asp-controller="CuentasPagar" asp-action="Index" class="quick-action-btn">
+                        + Agregar cuenta por pagar
+                    </a>
+                    <a asp-controller="Productos" asp-action="Index" class="quick-action-btn">
+                        + Crear producto
+                    </a>
+                    <a asp-controller="Inventario" asp-action="Index" class="quick-action-btn">
+                        Ver inventario completo
                     </a>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section>
-        <div class="row g-3">
-            <div class="col-md-7">
-                <div class="dashboard-card h-100">
-                    <h5 class="mb-3">Sugerencias de uso</h5>
-                    <ul class="dashboard-list">
-                        <li>Revisa los gastos al menos una vez al día para mantener tus registros al día.</li>
-                        <li>Usa el módulo de Cuentas por Pagar para priorizar pagos según su fecha límite.</li>
-                        <li>Actualiza el inventario cuando entren o salgan productos para evitar diferencias físicas.</li>
-                        <li>Clasifica bien tus productos por tipo para mejorar la organización general del sistema.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-md-5">
-                <div class="dashboard-card h-100">
-                    <h5 class="mb-3">Accesos rápidos</h5>
-                    <div class="d-grid gap-2">
-                        <a asp-controller="Gastos" asp-action="Index" class="btn btn-outline-primary btn-sm">
-                            + Registrar nuevo gasto
-                        </a>
-                        <a asp-controller="CuentasPagar" asp-action="Index" class="btn btn-outline-primary btn-sm">
-                            + Agregar cuenta por pagar
-                        </a>
-                        <a asp-controller="Productos" asp-action="Index" class="btn btn-outline-primary btn-sm">
-                            + Crear producto
-                        </a>
-                        <a asp-controller="Inventario" asp-action="Index" class="btn btn-outline-primary btn-sm">
-                            Ver inventario completo
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
 
 </div>
