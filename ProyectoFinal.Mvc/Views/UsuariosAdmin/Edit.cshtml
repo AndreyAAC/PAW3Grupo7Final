@@ -1,0 +1,68 @@
+﻿@model ProyectoFinal.Models.DTOs.UsuarioAdminDTO
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<div class="container py-3" style="max-width: 700px;">
+    <h2 class="mb-3">Editar Usuario</h2>
+
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="IdUsuario" />
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="NombreUsuario" class="form-label">Nombre de usuario</label>
+                <input asp-for="NombreUsuario" class="form-control" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="NombreApellido" class="form-label">Nombre completo</label>
+                <input asp-for="NombreApellido" class="form-control" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Correo" class="form-label">Correo</label>
+            <input asp-for="Correo" class="form-control" type="email" />
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Cedula" class="form-label">Cédula</label>
+                <input asp-for="Cedula" class="form-control" type="number" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Telefono" class="form-label">Teléfono</label>
+                <input asp-for="Telefono" class="form-control" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Role" class="form-label">Rol</label>
+            <select asp-for="Role" class="form-select">
+                <option value="1">Usuario</option>
+                <option value="2">Admin</option>
+            </select>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="text-danger mb-2">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        }
+
+        <div class="d-flex justify-content-between">
+            <a asp-controller="UsuariosAdmin" asp-action="Index" class="btn btn-secondary">
+                Volver
+            </a>
+            <button type="submit" class="btn btn-primary">
+                Guardar cambios
+            </button>
+        </div>
+    </form>
+</div>

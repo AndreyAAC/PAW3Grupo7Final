@@ -58,8 +58,6 @@
         <table class="table table-striped table-hover align-middle">
             <thead>
                 <tr>
-                    <th>Id Inventario</th>
-                    <th>Id Producto</th>
                     <th>Producto</th>
                     <th>Cantidad</th>
                     <th style="width:140px;">Acciones</th>
@@ -69,8 +67,6 @@
                 @foreach (var i in Model.Inventarios)
                 {
                     <tr>
-                        <td>@i.IdInventario</td>
-                        <td>@i.IdProducto</td>
                         <td>@i.NombreProducto</td>
                         <td>@i.Cantidad</td>
                         <td>
@@ -85,7 +81,7 @@
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@i.IdInventario" />
                                 <button class="btn btn-sm btn-outline-danger" type="submit"
-                                        onclick="return confirm('¿Eliminar registro de inventario @i.IdInventario?');">
+                                        onclick="return confirm('¿Eliminar el registro de inventario del producto \" @i.NombreProducto\"?');">
                                     Eliminar
                                 </button>
                             </form>
@@ -97,6 +93,7 @@
     </div>
 </div>
 
+<!-- Editar inventario -->
 <div class="modal fade" id="modalEditarInventario" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

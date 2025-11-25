@@ -32,7 +32,6 @@
         <table class="table table-striped table-hover align-middle">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nombre del Tipo</th>
                     <th style="width:140px;">Acciones</th>
                 </tr>
@@ -41,7 +40,6 @@
                 @foreach (var t in Model.Tipos)
                 {
                     <tr>
-                        <td>@t.IdTipoProducto</td>
                         <td>@t.NombreTipo</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary"
@@ -55,7 +53,7 @@
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@t.IdTipoProducto" />
                                 <button class="btn btn-sm btn-outline-danger" type="submit"
-                                        onclick="return confirm('¿Eliminar tipo @t.IdTipoProducto?');">
+                                        onclick="return confirm('¿Eliminar el tipo \" @t.NombreTipo\"?');">
                                     Eliminar
                                 </button>
                             </form>

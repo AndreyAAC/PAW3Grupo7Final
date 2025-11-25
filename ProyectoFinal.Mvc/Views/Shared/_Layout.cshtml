@@ -3,6 +3,7 @@
 
 @{
     var userName = HttpContextAccessor.HttpContext?.Session.GetString("UserName");
+    var roleId = HttpContextAccessor.HttpContext?.Session.GetInt32("RoleId") ?? 0;
 }
 
 <!DOCTYPE html>
@@ -17,7 +18,6 @@
     <link rel="stylesheet" href="~/ProyectoFinal.Mvc.styles.css" asp-append-version="true" />
 
     <style>
-        /* Estilo del menu */
         .menu-link {
             transition: 0.2s ease-in-out;
             font-weight: 500;
@@ -53,7 +53,7 @@
             <div class="container-fluid">
 
                 <a class="navbar-brand menu-link" asp-controller="Home" asp-action="Index">
-                    ProyectoFinal
+                    Inicio
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
@@ -63,7 +63,6 @@
                 <div class="collapse navbar-collapse" id="mainNavbar">
 
                     <ul class="navbar-nav me-auto mb-2 mb-sm-0">
-
                         <li class="nav-item">
                             <a class="nav-link menu-link text-dark"
                                asp-controller="Gastos" asp-action="Index">
@@ -99,7 +98,18 @@
                             </a>
                         </li>
 
+                        @* Solo admins ven este tab *@
+                        @if (roleId == 2)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link menu-link text-dark"
+                                   asp-controller="UsuariosAdmin" asp-action="Index">
+                                    Administración de Usuarios
+                                </a>
+                            </li>
+                        }
                     </ul>
+
 
                     <div class="d-flex align-items-center">
 

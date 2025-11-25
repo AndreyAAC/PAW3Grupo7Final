@@ -46,7 +46,6 @@
         <table class="table table-striped table-hover align-middle">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Motivo</th>
                     <th>Fecha</th>
                     <th>Monto</th>
@@ -59,21 +58,24 @@
                 @foreach (var c in Model.Cuentas)
                 {
                     <tr>
-                        <td>@c.IdCuentaPagar</td>
                         <td>@c.Motivo</td>
                         <td>@c.FechaCuentaPagar</td>
                         <td>@c.Monto</td>
                         <td>@c.PlazoPagar</td>
                         <td>@c.Descripcion</td>
                         <td>
-                            <a class="btn btn-sm btn-outline-primary"
-                               asp-controller="CuentasPagar" asp-action="Edit" asp-route-id="@c.IdCuentaPagar">Editar</a>
+                            <button class="btn btn-sm btn-outline-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEditarCuenta"
+                                    data-id="@c.IdCuentaPagar">
+                                Editar
+                            </button>
 
                             <form asp-controller="CuentasPagar" asp-action="Delete" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@c.IdCuentaPagar" />
                                 <button class="btn btn-sm btn-outline-danger" type="submit"
-                                        onclick="return confirm('¿Eliminar cuenta @c.IdCuentaPagar?');">
+                                        onclick="return confirm('¿Eliminar la cuenta \" @c.Motivo\"?');">
                                     Eliminar
                                 </button>
                             </form>
@@ -84,3 +86,31 @@
         </table>
     </div>
 </div>
+
+<!-- Editar cuenta por pagar -->
+<div class="modal fade" id="modalEditarCuenta" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" id="modalEditarCuentaBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const modalEditarCuenta = document.getElementById('modalEditarCuenta');
+        modalEditarCuenta.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-id');
+
+            const url = '@Url.Action("Edit", "CuentasPagar")' + '/' + id;
+
+            fetch(url)
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('modalEditarCuentaBody').innerHTML = html;
+                });
+        });
+    </script>
+}

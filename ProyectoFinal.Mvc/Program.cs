@@ -26,15 +26,11 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddHttpContextAccessor();
 
+// ProyectoFinal.Api
 
 builder.Services.AddHttpClient("ApiGastos", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7153/"); // ProyectoFinal.Api
-});
-
-builder.Services.AddHttpClient("ApiCuentas", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7204/"); // ProyectoFinal.MinimalApi
+    client.BaseAddress = new Uri("https://localhost:7153/"); 
 });
 
 builder.Services.AddHttpClient("ApiProductos", client =>
@@ -56,6 +52,19 @@ builder.Services.AddHttpClient("ApiAuth", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7153/");
 });
+
+builder.Services.AddHttpClient("ApiUsuarios", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7153/");
+});
+
+// ProyectoFinal.MinimalApi
+
+builder.Services.AddHttpClient("ApiCuentas", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7204/"); 
+});
+
 
 var app = builder.Build();
 
