@@ -6,8 +6,12 @@ using ProyectoFinal.Models.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// DB context
 builder.Services.AddDbContext<ControlInventarioDBContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("ControlInventario")));
+
+// DI de Business Logic
+builder.Services.AddScoped<ICuentaPagarBusiness, CuentaPagarBusiness>();
 
 builder.Services.AddCors(o => o.AddPolicy("ControlInventarioClient", p => p
     .AllowAnyHeader()
@@ -17,11 +21,12 @@ builder.Services.AddCors(o => o.AddPolicy("ControlInventarioClient", p => p
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Minimal API - Cuentas por Pagar", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Minimal API - Cuentas por Pagar",
+        Version = "v1"
+    });
 });
-
-// DI de Business 
-builder.Services.AddScoped<ICuentaPagarBusiness, CuentaPagarBusiness>();
 
 var app = builder.Build();
 
@@ -36,7 +41,8 @@ app.MapGet("/", () => Results.Redirect("/swagger"));
 app.UseHttpsRedirection();
 app.UseCors("ControlInventarioClient");
 
-//  Minimal API: CUENTAS POR PAGAR 
+// Cuentas pagar minimalAPI
+
 var cuentas = app.MapGroup("/cuentas-pagar");
 
 // GET /cuentas-pagar
@@ -54,30 +60,25 @@ cuentas.MapGet("/{id:int}", async (int id, ICuentaPagarBusiness business) =>
 });
 
 // POST /cuentas-pagar
-cuentas.MapPost("/", async (ICuentaPagarBusiness business, CuentaPagarDTO dto) =>
+cuentas.MapPost("/", async (CuentaPagarDTO dto, ICuentaPagarBusiness business) =>
 {
     var ok = await business.CreateAsync(dto);
     if (!ok) return Results.BadRequest(false);
-
     return Results.Ok(true);
 });
 
 // PUT /cuentas-pagar/{id}
-cuentas.MapPut("/{id:int}", async (int id, ICuentaPagarBusiness business, CuentaPagarDTO dto) =>
+cuentas.MapPut("/{id:int}", async (int id, CuentaPagarDTO dto, ICuentaPagarBusiness business) =>
 {
     var ok = await business.UpdateAsync(id, dto);
-    if (!ok) return Results.NotFound(false);
-
-    return Results.Ok(true);
+    return ok ? Results.Ok(true) : Results.NotFound(false);
 });
 
 // DELETE /cuentas-pagar/{id}
 cuentas.MapDelete("/{id:int}", async (int id, ICuentaPagarBusiness business) =>
 {
     var ok = await business.DeleteAsync(id);
-    if (!ok) return Results.NotFound(false);
-
-    return Results.Ok(true);
+    return ok ? Results.Ok(true) : Results.NotFound(false);
 });
 
 app.Run();
