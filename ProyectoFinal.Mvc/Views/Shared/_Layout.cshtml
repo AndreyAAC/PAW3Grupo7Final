@@ -130,6 +130,12 @@
                                 <a class="nav-link @(controller == "TiposProducto" ? "active" : "")"
                                    asp-controller="TiposProducto" asp-action="Index">Tipos de Producto</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(controller == "Reportes" ? "active" : "")"
+                                   asp-controller="Reportes" asp-action="Index">
+                                    Reportes
+                                </a>
+                            </li>
 
                             @if (isAdmin)
                             {

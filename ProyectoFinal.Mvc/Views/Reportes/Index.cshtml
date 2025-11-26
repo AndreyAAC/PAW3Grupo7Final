@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Reportes";
+}
+
+<div class="container mt-4">
+    <h2 class="fw-bold text-primary mb-3">Reportes del Sistema</h2>
+    <p class="text-muted mb-4">
+        Descargá la información de las principales tablas en formato Excel (CSV).
+    </p>
+
+    <div class="row g-4">
+
+        <!-- Inventario -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Inventario</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Existencias actuales por producto.
+                    </p>
+                    <a href="@Url.Action("ExportInventarioExcel", "Reportes")"
+                       class="btn btn-success w-100">
+                        Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gastos -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Gastos</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Listado de gastos registrados.
+                    </p>
+                    <a href="@Url.Action("ExportGastosExcel", "Reportes")"
+                       class="btn btn-success w-100">
+                        Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuentas por Pagar -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Cuentas por Pagar</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Obligaciones pendientes de pago.
+                    </p>
+                    <a href="@Url.Action("ExportCuentasPagarExcel", "Reportes")"
+                       class="btn btn-success w-100">
+                        Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historiales (placeholder) -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100 border-warning">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Historiales</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Pendiente (No hay tabla en la bd).
+                    </p>
+                    <a href="@Url.Action("ExportHistorialesExcel", "Reportes")"
+                       class="btn btn-outline-secondary w-100" disabled>
+                        Próximamente
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
