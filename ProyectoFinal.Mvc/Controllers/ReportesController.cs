@@ -21,9 +21,6 @@ namespace ProyectoFinal.Mvc.Controllers
             return View();
         }
 
-        // ==========================
-        //  INVENTARIO - EXCEL (XLSX)
-        // ==========================
         [HttpGet]
         public async Task<IActionResult> ExportInventarioExcel()
         {
@@ -71,9 +68,7 @@ namespace ProyectoFinal.Mvc.Controllers
             );
         }
 
-        // ======================
-        //  GASTOS - EXCEL (XLSX)
-        // ======================
+
         [HttpGet]
         public async Task<IActionResult> ExportGastosExcel()
         {
@@ -86,7 +81,7 @@ namespace ProyectoFinal.Mvc.Controllers
             using var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("Gastos");
 
-            // Encabezados (ajusta según tu DTO real)
+            // Encabezados
             worksheet.Cell(1, 1).Value = "IdGasto";
             worksheet.Cell(1, 2).Value = "Motivo";
             worksheet.Cell(1, 3).Value = "FechaGasto";
@@ -122,9 +117,6 @@ namespace ProyectoFinal.Mvc.Controllers
             );
         }
 
-        // ==============================
-        //  CUENTAS POR PAGAR - EXCEL (XLSX)
-        // ==============================
         [HttpGet]
         public async Task<IActionResult> ExportCuentasPagarExcel()
         {
@@ -137,7 +129,7 @@ namespace ProyectoFinal.Mvc.Controllers
             using var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("Cuentas por Pagar");
 
-            // Encabezados (ajusta según tu DTO real)
+            // Encabezados
             worksheet.Cell(1, 1).Value = "IdCuentaPagar";
             worksheet.Cell(1, 2).Value = "Motivo";
             worksheet.Cell(1, 3).Value = "Fecha";
@@ -173,9 +165,6 @@ namespace ProyectoFinal.Mvc.Controllers
             );
         }
 
-        // ==================================
-        //  HISTORIALES - PENDIENTE
-        // ==================================
         [HttpGet]
         public IActionResult ExportHistorialesExcel()
         {

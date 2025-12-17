@@ -25,7 +25,7 @@ public partial class ControlInventarioDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // ===== Usuario =====
+        //  Usuario 
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(e => e.IdUsuario).HasName("PK_Usuario");
@@ -51,7 +51,7 @@ public partial class ControlInventarioDBContext : DbContext
                   .HasConstraintName("FK_Usuario_Role");
         });
 
-        // ===== Role =====
+        //  Role 
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.IdRole).HasName("PK_Role");
@@ -60,7 +60,7 @@ public partial class ControlInventarioDBContext : DbContext
             entity.Property(e => e.NombreRole).HasMaxLength(100).HasColumnName("NombreRole");
         });
 
-        // ===== TipoProducto =====
+        //  TipoProducto 
         modelBuilder.Entity<TipoProducto>(entity =>
         {
             entity.HasKey(e => e.IdTipoProducto).HasName("PK_TipoProducto");
@@ -69,7 +69,7 @@ public partial class ControlInventarioDBContext : DbContext
             entity.Property(e => e.NombreTipo).HasMaxLength(120).HasColumnName("NombreTipo");
         });
 
-        // ===== Producto =====
+        //  Producto 
         modelBuilder.Entity<Producto>(entity =>
         {
             entity.HasKey(e => e.IdProducto).HasName("PK_Producto");
@@ -89,7 +89,7 @@ public partial class ControlInventarioDBContext : DbContext
                   .HasConstraintName("FK_Producto_TipoProducto");
         });
 
-        // ===== Inventario =====
+        //  Inventario 
         modelBuilder.Entity<Inventario>(entity =>
         {
             entity.HasKey(e => e.IdInventario).HasName("PK_Inventario");
@@ -105,7 +105,7 @@ public partial class ControlInventarioDBContext : DbContext
                   .HasConstraintName("FK_Inventario_Producto");
         });
 
-        // ===== Cliente =====
+        //  Cliente 
         modelBuilder.Entity<Cliente>(entity =>
         {
             entity.HasKey(e => e.IdCliente).HasName("PK_Cliente");
@@ -116,7 +116,7 @@ public partial class ControlInventarioDBContext : DbContext
             entity.Property(e => e.Correo).HasMaxLength(256).HasColumnName("correo");
         });
 
-        // ===== Cita =====
+        //  Cita 
         modelBuilder.Entity<Cita>(entity =>
         {
             entity.HasKey(e => e.IdCita).HasName("PK_Cita");
@@ -143,7 +143,7 @@ public partial class ControlInventarioDBContext : DbContext
                   .HasConstraintName("FK_Cita_Producto");
         });
 
-        // ===== EstadoPedido =====
+        //  EstadoPedido 
         modelBuilder.Entity<EstadoPedido>(entity =>
         {
             entity.HasKey(e => e.IdEstadoPedido).HasName("PK_EstadoPedido");
@@ -152,7 +152,7 @@ public partial class ControlInventarioDBContext : DbContext
             entity.Property(e => e.NombreEstado).HasMaxLength(100).HasColumnName("NombreEstado");
         });
 
-        // ===== Pedido =====
+        //  Pedido 
         modelBuilder.Entity<Pedido>(entity =>
         {
             entity.HasKey(e => e.IdPedido).HasName("PK_Pedido");
@@ -170,7 +170,7 @@ public partial class ControlInventarioDBContext : DbContext
                   .HasConstraintName("FK_Pedido_EstadoPedido");
         });
 
-        // ===== PedidoDetalle =====
+        //  PedidoDetalle 
         modelBuilder.Entity<PedidoDetalle>(entity =>
         {
             entity.ToTable("PedidoDetalle");
@@ -194,7 +194,7 @@ public partial class ControlInventarioDBContext : DbContext
                   .HasConstraintName("FK_PedidoDetalle_Producto");
         });
 
-        // ===== CategoriaGasto =====
+        //  CategoriaGasto 
         modelBuilder.Entity<CategoriaGasto>(entity =>
         {
             entity.HasKey(e => e.IdCategoriaGasto).HasName("PK_CategoriaGasto");
@@ -203,7 +203,7 @@ public partial class ControlInventarioDBContext : DbContext
             entity.Property(e => e.NombreCategoria).HasMaxLength(120).HasColumnName("NombreCategoria");
         });
 
-        // ===== Gasto =====
+        //  Gasto 
         modelBuilder.Entity<Gasto>(entity =>
         {
             entity.HasKey(e => e.IdGasto).HasName("PK_Gasto");
@@ -223,7 +223,7 @@ public partial class ControlInventarioDBContext : DbContext
                   .HasConstraintName("FK_Gasto_CategoriaGasto");
         });
 
-        // ===== CuentasPagar =====
+        //  CuentasPagar 
         modelBuilder.Entity<CuentasPagar>(entity =>
         {
             entity.HasKey(e => e.IdCuentaPagar).HasName("PK_CuentasPagar");

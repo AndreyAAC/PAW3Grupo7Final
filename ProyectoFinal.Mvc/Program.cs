@@ -58,23 +58,24 @@ builder.Services.AddHttpClient("ApiUsuarios", client =>
     client.BaseAddress = new Uri("https://localhost:7153/");
 });
 
-// Historial de Pedidos - API Web
 builder.Services.AddHttpClient("ApiPedidos", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7153/");
 });
-
-// ProyectoFinal.MinimalApi
 
 builder.Services.AddHttpClient("ApiCuentas", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7204/"); 
 });
 
-// Historial de Citas - Minimal API
 builder.Services.AddHttpClient("ApiCitas", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7204/");
+});
+
+builder.Services.AddHttpClient("ApiCategoriasGasto", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7153/");
 });
 
 

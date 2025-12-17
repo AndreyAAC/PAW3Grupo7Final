@@ -32,15 +32,8 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minimal API v1");
-});
+if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
 
-app.MapGet("/", () => Results.Redirect("/swagger"));
-
-app.UseHttpsRedirection();
 app.UseCors("ControlInventarioClient");
 
 // Cuentas pagar minimalAPI

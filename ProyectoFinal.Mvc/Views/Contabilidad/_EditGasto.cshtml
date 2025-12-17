@@ -27,10 +27,25 @@
             <input type="number" step="0.01" name="Monto" class="form-control" value="@Model.Monto" required />
         </div>
 
+        @{
+            var categorias = ViewBag.Categorias as List<ProyectoFinal.Models.DTOs.CategoriaGastoDTO> ?? new();
+        }
+
         <div class="col-md-4">
-            <label class="form-label">Categoría (Id)</label>
-            <input type="number" name="IdCategoriaGasto" class="form-control" value="@(Model.IdCategoriaGasto?.ToString())" />
+            <label class="form-label">Categoría</label>
+            <select name="IdCategoriaGasto" class="form-select">
+                <option value="">-- Sin categoría --</option>
+                @foreach (var c in categorias)
+                {
+                    var selected = (Model.IdCategoriaGasto.HasValue && Model.IdCategoriaGasto.Value == c.IdCategoriaGasto)
+                    ? "selected"
+                    : null;
+
+                    <option value="@c.IdCategoriaGasto" selected="@selected">@c.NombreCategoria</option>
+                }
+            </select>
         </div>
+
 
         <div class="col-12">
             <label class="form-label">Descripción</label>

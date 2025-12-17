@@ -28,6 +28,7 @@ builder.Services.AddScoped<IInventarioBusiness, InventarioBusiness>();
 builder.Services.AddScoped<IGastoBusiness, GastoBusiness>();
 builder.Services.AddScoped<IUsuarioBusiness, UsuarioBusiness>();
 builder.Services.AddScoped<IPedidoBusiness, PedidoBusiness>();
+builder.Services.AddScoped<ICategoriaGastoBusiness, CategoriaGastoBusiness>();
 
 
 
