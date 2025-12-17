@@ -119,6 +119,14 @@
                                    asp-controller="CuentasPagar" asp-action="Index">Cuentas por Pagar</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link @(controller == "HistorialPedidos" ? "active" : "")"
+                                   asp-controller="HistorialPedidos" asp-action="Index">Historial Pedidos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(controller == "HistorialCitas" ? "active" : "")"
+                                   asp-controller="HistorialCitas" asp-action="Index">Historial Citas</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link @(controller == "Inventario" ? "active" : "")"
                                    asp-controller="Inventario" asp-action="Index">Inventario</a>
                             </li>

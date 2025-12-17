@@ -1,0 +1,48 @@
+﻿@model ProyectoFinal.Mvc.Models.Historial.HistorialPedidosVM
+
+@{
+    ViewData["Title"] = "Historial de Pedidos";
+}
+
+<div class="container py-3">
+    <h2>Historial de Pedidos</h2>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
+        <h4 class="mb-0">Listado</h4>
+    </div>
+
+    @if (Model.Pedidos == null || !Model.Pedidos.Any())
+    {
+        <div class="alert alert-info mt-3">
+            No hay pedidos registrados en el historial.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover align-middle mt-3">
+            <thead>
+                <tr>
+                    <th>N° Pedido</th>
+                    <th>Fecha de Inicio</th>
+                    <th>Fecha de Entrega</th>
+                    <th>Estado</th>
+                    <th>Cantidad de Productos</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Pedidos)
+                {
+                    <tr>
+                        <td>@p.IdPedido</td>
+                        <td>@p.FechaDeInicio.ToString("dd/MM/yyyy")</td>
+                        <td>@(p.FechaDeEntrega.HasValue? p.FechaDeEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
+                        <td>@p.NombreEstado</td>
+                        <td>@p.CantidadProductos</td>
+                        <td>@p.Total.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

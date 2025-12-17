@@ -12,6 +12,8 @@ builder.Services.AddDbContext<ControlInventarioDBContext>(opt =>
 
 // DI de Business Logic
 builder.Services.AddScoped<ICuentaPagarBusiness, CuentaPagarBusiness>();
+builder.Services.AddScoped<ICitaBusiness, CitaBusiness>();
+
 
 builder.Services.AddCors(o => o.AddPolicy("ControlInventarioClient", p => p
     .AllowAnyHeader()
@@ -80,5 +82,27 @@ cuentas.MapDelete("/{id:int}", async (int id, ICuentaPagarBusiness business) =>
     var ok = await business.DeleteAsync(id);
     return ok ? Results.Ok(true) : Results.NotFound(false);
 });
+
+// Historial de Citas - Minimal API
+
+var citasHistorial = app.MapGroup("/citas-historial");
+
+// GET /citas-historial
+citasHistorial.MapGet("/", async (ICitaBusiness business) =>
+{
+    var data = await business.GetHistorialAsync();
+    return Results.Ok(data);
+});
+
+// GET /citas-historial/{id}
+citasHistorial.MapGet("/{id:int}", async (int id, ICitaBusiness business) =>
+{
+    var cita = await business.GetByIdAsync(id);
+    if (cita == null)
+        return Results.NotFound();
+
+    return Results.Ok(cita);
+});
+
 
 app.Run();
